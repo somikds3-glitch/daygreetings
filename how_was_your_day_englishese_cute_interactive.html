@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hi — How was your day? (Englishese)</title>
+<meta name="color-scheme" content="light dark">
+<style>
+  :root{
+    --bg:#fff7fb;
+    --ink:#1f2937;
+    --panel:#ffffff;
+    --muted:#6b7280;
+    --accent:#ff6b9a;
+    --accent2:#8b5cf6;
+    --ok:#16a34a;
+    --warn:#f59e0b;
+    --err:#ef4444;
+    --shadow:0 12px 30px rgba(0,0,0,.08);
+    --ring: 0 0 0 3px rgba(255,107,154,.25);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0f1117;
+      --ink:#e5e7eb;
+      --panel:#161a22;
+      --muted:#9aa3b2;
+      --shadow:0 12px 30px rgba(0,0,0,.35);
+      --ring: 0 0 0 3px rgba(255,107,154,.35);
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font:16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(800px 500px at 80% -10%, rgba(139,92,246,.10), transparent 60%),
+      radial-gradient(900px 600px at 0% 120%, rgba(255,107,154,.10), transparent 60%),
+      var(--bg);
+    overflow-x:hidden;
+  }
+  .wrap{max-width:940px;margin:0 auto;padding:24px}
+  header{
+    position:sticky;top:0;z-index:10;
+    backdrop-filter:saturate(140%) blur(6px);
+    background:linear-gradient(180deg, rgba(255,255,255,.6), rgba(255,255,255,0));
+    border-bottom:1px solid rgba(0,0,0,.05);
+  }
+  @media (prefers-color-scheme: dark){
+    header{background:linear-gradient(180deg, rgba(16,18,26,.6), rgba(16,18,26,0));border-bottom-color:rgba(255,255,255,.06)}
+  }
+  .toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0}
+  .brand{display:flex;align-items:center;gap:10px}
+  .heartlogo{width:28px;height:28px;position:relative}
+  .heartlogo::before,.heartlogo::after{
+    content:"";position:absolute;left:14px;top:8px;width:14px;height:22px;background:var(--accent);
+    border-radius:14px 14px 0 0;transform:rotate(-45deg);transform-origin:0 100%;box-shadow:var(--shadow)
+  }
+  .heartlogo::after{left:auto;right:-2px;transform:rotate(45deg);transform-origin:100% 100%}
+  h1{font-size:22px;margin:0}
+  .btn{
+    border:1px solid rgba(0,0,0,.08);
+    background:linear-gradient(180deg, rgba(255,255,255,.8), rgba(255,255,255,.6));
+    padding:10px 14px;border-radius:12px;cursor:pointer;color:var(--ink);
+    box-shadow:var(--shadow);transition:transform .15s ease, box-shadow .15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  @media (prefers-color-scheme: dark){
+    .btn{border-color:rgba(255,255,255,.08);background:linear-gradient(180deg, rgba(30,34,44,.9), rgba(30,34,44,.7))}
+  }
+  .btn:hover{transform:translateY(-1px)}
+  .btn:focus{outline:none;box-shadow:var(--shadow), var(--ring)}
+  .chip{font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid rgba(0,0,0,.08)}
+  @media (prefers-color-scheme: dark){.chip{border-color:rgba(255,255,255,.1)}}
+  .hero{
+    margin-top:16px;padding:24px;border-radius:20px;background:linear-gradient(135deg, rgba(255,107,154,.12), rgba(139,92,246,.12));
+    border:1px solid rgba(0,0,0,.06);box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .type{font-size:24px}
+  .blink{animation:blink 1.2s steps(1,end) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;margin-top:18px}
+  @media (max-width: 900px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid rgba(0,0,0,.06);border-radius:16px;box-shadow:var(--shadow);padding:16px}
+  .row{display:flex;gap:8px;flex-wrap:wrap}
+  .option{flex:1;min-width:140px}
+  .option button{width:100%}
+  .out{margin-top:8px;padding:12px;border-radius:12px;background:rgba(255,107,154,.10);border:1px dashed rgba(0,0,0,.08)}
+  @media (prefers-color-scheme: dark){.out{background:rgba(255,107,154,.08);border-color:rgba(255,255,255,.12)}}
+  .tiny{font-size:12px;color:var(--muted)}
+  .stickerbar{display:flex;gap:8px;flex-wrap:wrap}
+  .sticker{cursor:grab;font-size:22px;padding:8px;border-radius:12px;border:1px solid rgba(0,0,0,.06);background:var(--panel);box-shadow:var(--shadow)}
+  .canvas{position:relative;min-height:180px;border:2px dashed rgba(0,0,0,.12);border-radius:16px;margin-top:8px;overflow:hidden}
+  .placed{position:absolute;user-select:none;cursor:move;transform:translate(-50%, -50%)}
+  .input{display:flex;gap:8px;margin-top:8px}
+  input[type="text"], textarea{
+    width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(0,0,0,.12);background:transparent;color:var(--ink);
+  }
+  textarea{min-height:100px;resize:vertical}
+  .kbd{font:12px ui-monospace, SFMono-Regular, Menlo, Consolas; padding:2px 6px; border-radius:6px; border:1px solid rgba(0,0,0,.12)}
+  .footer{margin-top:18px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:13px}
+  /* Floating hearts */
+  #hearts{position:fixed;inset:0;pointer-events:none;z-index:0}
+  /* Simple tooltip */
+  .tip{position:relative}
+  .tip:hover::after{
+    content:attr(data-tip);position:absolute;left:0;bottom:120%;white-space:nowrap;
+    background:rgba(0,0,0,.75);color:white;padding:6px 8px;border-radius:8px;font-size:12px
+  }
+</style>
+</head>
+<body>
+<canvas id="hearts"></canvas>
+<header class="wrap">
+  <div class="toolbar">
+    <div class="brand">
+      <div class="heartlogo" aria-hidden="true"></div>
+      <h1>Heyy 👋 — Aji tumar din kene gol?</h1>
+    </div>
+    <span class="chip">Englishese • Cute • Interactive</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero card">
+    <div class="type" id="type">
+      Hi—<span class="tip" data-tip="Transliteration: 'aji'=today, 'tumar'=your">aji</span> tumar din kene gol? <span class="blink">|</span>
+    </div>
+    <div class="tiny" style="margin-top:6px">PS: If today was loud, this page is soft. If today was soft, this page is softer. ☁️</div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h3 style="margin-top:0">Pick one (or many)</h3>
+      <div class="row">
+        <div class="option"><button class="btn" data-mood="good">Pretty good 🌞</button></div>
+        <div class="option"><button class="btn" data-mood="okay">So-so 🌤️</button></div>
+        <div class="option"><button class="btn" data-mood="tough">Tough day ☔</button></div>
+        <div class="option"><button class="btn" data-mood="amazing">Absolutely amazing ✨</button></div>
+      </div>
+      <div id="reply" class="out" aria-live="polite"></div>
+      <div class="tiny">Tip: tap different moods—each has a tiny note in Englishese.</div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Send a tiny note back?</h3>
+      <div class="input">
+        <input id="yourName" type="text" placeholder="Your name (optional) — e.g., Somik">
+      </div>
+      <div class="input">
+        <textarea id="freeText" placeholder="Write anything… (example ideas appear below)"></textarea>
+      </div>
+      <div class="row">
+        <button class="btn" id="suggest">Give me sweet suggestions</button>
+        <button class="btn tip" id="copy" data-tip="Copies message to clipboard">Copy message</button>
+      </div>
+      <div id="ideas" class="out tiny"></div>
+    </div>
+  </section>
+
+  <section class="card" style="margin-top:16px">
+    <h3 style="margin-top:0">Decorate with stickers</h3>
+    <div class="stickerbar">
+      <div class="sticker" draggable="true">💖</div>
+      <div class="sticker" draggable="true">🌸</div>
+      <div class="sticker" draggable="true">🫶</div>
+      <div class="sticker" draggable="true">🍰</div>
+      <div class="sticker" draggable="true">🌈</div>
+      <div class="sticker" draggable="true">🧋</div>
+    </div>
+    <div class="canvas" id="canvas" aria-label="Drop stickers here. Double-tap to spin."></div>
+    <div class="tiny">Drag a sticker into the canvas. Pinch/scroll to resize (desktop: hold <span class="kbd">Shift</span> + scroll). Double-click to spin.</div>
+  </section>
+
+  <section class="card" style="margin-top:16px">
+    <h3 style="margin-top:0">A tiny promise</h3>
+    <p>Jodi din-to tough hoy, moi chai tumak remind koribole: you don’t have to do it all aji. <b>Ek-ek step</b> enough. And jodi din-to bright hoy, share thoda sunshine—moi collect koru. ☀️</p>
+    <button class="btn" id="celebrate">Send floating hearts</button>
+  </section>
+
+  <div class="footer">
+    <div>Made with care • Works in Safari • No internet needed</div>
+    <div class="tiny">Keyboard: <span class="kbd">Tab</span> to focus, <span class="kbd">Enter</span> to click.</div>
+  </div>
+</main>
+
+<script>
+  // Typewriter (Safari-friendly)
+  (function typewriter(){
+    const el = document.getElementById('type');
+    const full = "Hi—aji tumar din kene gol? |";
+    let i = 0;
+    function tick(){
+      i = (i+1) % (full.length+1);
+      el.innerHTML = full.slice(0,i) + '<span class="blink">|</span>';
+      requestAnimationFrame(()=>setTimeout(tick, 75));
+    }
+    tick();
+  })();
+
+  // Mood replies (Englishese)
+  const reply = document.getElementById('reply');
+  const moodLines = {
+    good: "Bhal lagil xuni! Hope tumar vibes continue kore like this. Aji rati te rest kora, kal horu-horu magic.",
+    okay: "Hmm, okay-okay din. Chinta nai—little joys lagao: garam cha, soft playlist, aru early sleep.",
+    tough: "Areh, tough din asil niki? Moi tumar side-t ase. Slow down; nijor upor dukkhan kom rakh. You did enough.",
+    amazing: "Uff, amazing! Tumi glow korisa. Thoda share kobi niki—ki kora, ki khaila, ki hosa?"
+  };
+  document.querySelectorAll('[data-mood]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const k = btn.getAttribute('data-mood');
+      reply.textContent = moodLines[k] || "";
+      popHearts();
+      save('lastMood', k);
+    });
+  });
+
+  // Suggestions for message
+  const ideas = [
+    "Aji tumar din kene gol? Jodi tired, moi ek cup cha banaim. ☕",
+    "Just checking: nijake bhal paba, aru moi tumar upor proud.",
+    "Kal jodi free, ekta lil walk korim niki? Fresh air + gossip 😌",
+    "Tumi je bhabe handle kora—solid. Moi witness kori, respect ase."
+  ];
+  function rand(n){ return Math.floor(Math.random()*n); }
+  function save(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+  function load(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } }
+
+  const ideaBox = document.getElementById('ideas');
+  const suggestBtn = document.getElementById('suggest');
+  const freeText = document.getElementById('freeText');
+  const copyBtn = document.getElementById('copy');
+  const yourName = document.getElementById('yourName');
+
+  suggestBtn.addEventListener('click', ()=>{
+    const pick = ideas[rand(ideas.length)];
+    freeText.value = pick;
+    ideaBox.textContent = "Suggestion added ✨ You can edit freely.";
+  });
+
+  copyBtn.addEventListener('click', ()=>{
+    const name = yourName.value.trim();
+    const msg = (name? (name + ": "):"") + freeText.value.trim();
+    if(!msg){ ideaBox.textContent = "Write something first 😄"; return; }
+    navigator.clipboard.writeText(msg).then(()=>{
+      ideaBox.textContent = "Copied to clipboard. Paste in chat/message app.";
+    });
+  });
+
+  // Stickers: drag to canvas, move, resize, spin
+  const canvas = document.getElementById('canvas');
+  let dragEl = null, offsetX = 0, offsetY = 0;
+  document.querySelectorAll('.sticker').forEach(st=>{
+    st.addEventListener('dragstart', (e)=>{
+      e.dataTransfer.setData('text/plain', st.textContent);
+    });
+  });
+  canvas.addEventListener('dragover', (e)=>{ e.preventDefault(); });
+  canvas.addEventListener('drop', (e)=>{
+    e.preventDefault();
+    const emoji = e.dataTransfer.getData('text/plain');
+    const div = document.createElement('div');
+    div.className = 'placed';
+    div.textContent = emoji;
+    div.style.left = e.offsetX + 'px';
+    div.style.top  = e.offsetY + 'px';
+    div.style.fontSize = '28px';
+    div.setAttribute('tabindex','0');
+    canvas.appendChild(div);
+    attachPlaced(div);
+  });
+  function attachPlaced(el){
+    el.addEventListener('mousedown',(e)=>{
+      dragEl = el; offsetX = e.offsetX; offsetY = e.offsetY;
+    });
+    document.addEventListener('mousemove',(e)=>{
+      if(dragEl){
+        const rect = canvas.getBoundingClientRect();
+        dragEl.style.left = (e.clientX - rect.left - offsetX) + 'px';
+        dragEl.style.top  = (e.clientY - rect.top  - offsetY) + 'px';
+      }
+    });
+    document.addEventListener('mouseup',()=>{ dragEl=null; });
+    // Resize: wheel; Shift+wheel desktop; pinch zoom triggers wheel in Safari with ctrlKey
+    el.addEventListener('wheel',(e)=>{
+      e.preventDefault();
+      const fs = parseInt(el.style.fontSize,10) || 28;
+      const delta = (e.deltaY < 0 ? 4 : -4);
+      el.style.fontSize = Math.max(16, fs + delta) + 'px';
+    }, {passive:false});
+    el.addEventListener('dblclick',()=>{
+      el.style.transition = 'transform .6s ease';
+      const now = el.style.transform.includes('rotate(360deg)') ? 'rotate(0deg)' : 'rotate(360deg)';
+      el.style.transform = now;
+      setTimeout(()=>{ el.style.transition=''; }, 650);
+    });
+  }
+
+  // Floating hearts canvas (Safari OK)
+  const canvasH = document.getElementById('hearts');
+  const ctx = canvasH.getContext('2d');
+  function resize(){ canvasH.width = innerWidth; canvasH.height = innerHeight; }
+  resize(); addEventListener('resize', resize);
+
+  let hearts = [];
+  function makeHeart(){
+    const x = Math.random()*canvasH.width;
+    const y = canvasH.height + 20;
+    const size = 10 + Math.random()*14;
+    const speed = 0.6 + Math.random()*1.2;
+    const wobble = Math.random()*1.5;
+    const hue = Math.random() < .5 ? 340 : 265; // pink/purple
+    hearts.push({x,y,size,speed,wobble,t:Math.random()*Math.PI,hue,life: 1});
+  }
+  function drawHeart(x,y,s,color){
+    ctx.save(); ctx.translate(x,y); ctx.rotate(Math.PI/4);
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    const r = s/2;
+    ctx.moveTo(0,0);
+    ctx.arc(-r,0,r,Math.PI,0,false);
+    ctx.arc(0,-r,r,Math.PI,0,false);
+    ctx.lineTo(r,0);
+    ctx.closePath();
+    ctx.fill(); ctx.restore();
+  }
+  function step(){
+    ctx.clearRect(0,0,canvasH.width,canvasH.height);
+    if(Math.random() < 0.15) makeHeart();
+    hearts.forEach(h=>{
+      h.t += 0.03;
+      h.x += Math.sin(h.t)*h.wobble;
+      h.y -= h.speed;
+      h.life -= 0.003;
+      const color = "hsla("+h.hue+", 85%, 65%,"+Math.max(0,h.life)+")";
+      drawHeart(h.x,h.y,h.size,color);
+    });
+    hearts = hearts.filter(h=> h.y > -30 && h.life>0);
+    requestAnimationFrame(step);
+  }
+  step();
+
+  function popHearts(){
+    for(let i=0;i<20;i++){ makeHeart(); }
+  }
+  document.getElementById('celebrate').addEventListener('click', popHearts);
+
+  // Restore last mood
+  const last = load('lastMood');
+  if(last && moodLines[last]){ reply.textContent = moodLines[last]; }
+</script>
+</body>
+</html>
