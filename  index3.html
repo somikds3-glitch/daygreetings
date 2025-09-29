@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Shyama Sangeet — Englishese Explainer</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Shyama Sangeet — Englishese Guide</title>
+<meta name="color-scheme" content="light dark">
 <style>
   :root{
-    --bg: #0b0c10;
-    --panel: #111318;
-    --ink: #eaeff3;
+    --bg:#0b0c10;
+    --panel:#111318;
+    --ink:#eaeff3;
     --muted:#aab4be;
     --accent:#67e8f9;
-    --accent-2:#a78bfa;
-    --ok:#22c55e;
-    --warn:#f59e0b;
-    --err:#ef4444;
-    --shadow: 0 10px 30px rgba(0,0,0,.35);
+    --accent2:#a78bfa;
+    --ring:0 0 0 3px rgba(103,232,249,.25);
+    --shadow:0 10px 30px rgba(0,0,0,.35);
   }
   [data-theme="light"]{
     --bg:#f7fafc;
@@ -23,85 +22,93 @@
     --ink:#0b1220;
     --muted:#415269;
     --accent:#0ea5e9;
-    --accent-2:#7c3aed;
-    --shadow: 0 10px 30px rgba(16,24,40,.08);
+    --accent2:#7c3aed;
+    --shadow:0 10px 30px rgba(16,24,40,.08);
+    --ring:0 0 0 3px rgba(14,165,233,.22);
   }
+  *{box-sizing:border-box}
   html,body{height:100%}
   body{
     margin:0;
     font:16px/1.55 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
     color:var(--ink);
-    background: radial-gradient(1200px 800px at 80% -10%, rgba(103,232,249,.15), transparent 60%),
-                radial-gradient(900px 600px at 0% 120%, rgba(167,139,250,.12), transparent 60%),
-                var(--bg);
+    background:
+      radial-gradient(1200px 800px at 80% -10%, rgba(103,232,249,.12), transparent 60%),
+      radial-gradient(900px 600px at 0% 120%, rgba(167,139,250,.10), transparent 60%),
+      var(--bg);
   }
-  .wrap{max-width:1100px;margin:0 auto;padding:28px}
+  .wrap{max-width:1100px;margin:0 auto;padding:24px}
   header{
     position:sticky;top:0;z-index:10;
-    background: linear-gradient(180deg, rgba(0,0,0,.5), rgba(0,0,0,0));
-    backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px) saturate(140%);
+    background:linear-gradient(180deg, rgba(0,0,0,.45), rgba(0,0,0,0));
   }
-  .toolbar{
-    display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;
+  [data-theme="light"] header{
+    background:linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,0));
   }
-  .btn, .chip{
-    border:1px solid color-mix(in oklab, var(--ink) 15%, transparent);
-    padding:10px 14px;border-radius:10px;background:color-mix(in oklab, var(--panel) 90%, transparent);
-    color:var(--ink);cursor:pointer;box-shadow:var(--shadow);transition:.2s transform;
+  .toolbar{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 0}
+  .title{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  h1{font-size:24px;margin:0}
+  .chip{
+    font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.18);
+    background:rgba(255,255,255,.06)
   }
-  .btn:hover{transform: translateY(-1px)}
-  .chip{padding:8px 10px;font-size:12px;box-shadow:none}
-  .title{
-    display:flex;gap:12px;align-items:center;flex-wrap:wrap
+  [data-theme="light"] .chip{border-color:rgba(0,0,0,.12);background:rgba(0,0,0,.03)}
+  .toggle{display:flex;gap:10px;align-items:center}
+  .switch{
+    position:relative;width:52px;height:28px;border-radius:999px;cursor:pointer;
+    background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25)
   }
-  h1{font-size:28px;margin:0}
-  .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;margin-top:18px}
+  [data-theme="light"] .switch{background:rgba(0,0,0,.06);border-color:rgba(0,0,0,.15)}
+  .switch::after{
+    content:"";position:absolute;inset:4px auto 4px 4px;width:20px;border-radius:50%;background:#fff;transition:.2s left;
+  }
+  [data-theme="light"] .switch::after{background:#111}
+  .switch[data-on="true"]::after{left:28px}
+
+  .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}
   @media (max-width: 900px){.grid{grid-template-columns:1fr}}
   .card{
-    background:linear-gradient(180deg, color-mix(in oklab, var(--panel) 90%, transparent), color-mix(in oklab, var(--panel) 70%, transparent));
-    border:1px solid color-mix(in oklab, var(--ink) 15%, transparent);
-    border-radius:16px;padding:18px;box-shadow:var(--shadow);
+    background:var(--panel);border:1px solid rgba(255,255,255,.15);
+    border-radius:16px;box-shadow:var(--shadow);padding:16px
   }
-  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-  .tab{border:none;background:transparent;color:var(--ink);padding:8px 12px;border-radius:10px;cursor:pointer}
-  .tab[aria-selected="true"]{background:color-mix(in oklab, var(--accent) 18%, transparent);}
+  [data-theme="light"] .card{border-color:rgba(0,0,0,.08)}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .tab{
+    border:1px solid rgba(255,255,255,.2);
+    background:transparent;color:var(--ink);
+    padding:8px 12px;border-radius:10px;cursor:pointer;
+  }
+  [data-theme="light"] .tab{border-color:rgba(0,0,0,.12)}
+  .tab[aria-selected="true"]{background:rgba(103,232,249,.16)}
   .section{display:none}
-  .section.active{display:block;animation:fade .25s ease-in}
+  .section.active{display:block;animation:fade .25s ease}
   @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-  .kbd{font:12px ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;padding:1px 6px;border-radius:6px;background:color-mix(in oklab, var(--ink) 9%, transparent);border:1px solid color-mix(in oklab, var(--ink) 18%, transparent)}
-  .em{background: linear-gradient(90deg, color-mix(in oklab, var(--accent) 25%, transparent), transparent);
-      border-radius:6px;padding:0 6px}
-  .hl{background: color-mix(in oklab, var(--accent-2) 25%, transparent);border-radius:6px;padding:0 6px}
-  details{border:1px dashed color-mix(in oklab, var(--ink) 20%, transparent);border-radius:12px;padding:10px 12px}
-  summary{cursor:pointer}
-  .foot{margin-top:20px;font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .kbd{font:12px ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;padding:1px 6px;border-radius:6px;border:1px solid rgba(255,255,255,.28)}
+  [data-theme="light"] .kbd{border-color:rgba(0,0,0,.18)}
+  .foot{margin-top:12px;font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
   .pill{display:inline-flex;gap:6px;align-items:center}
-  .toggle{display:inline-flex;gap:10px;align-items:center}
-  .switch{position:relative;width:52px;height:28px;background:color-mix(in oklab, var(--ink) 20%, transparent);border-radius:99px;cursor:pointer}
-  .switch::after{content:"";position:absolute;inset:4px auto 4px 4px;width:20px;border-radius:50%;background:white;transition:.2s left,.2s transform}
-  [data-theme="light"] .switch::after{background:#111}
-  .switch[data-on="true"]{background:var(--accent)}
-  .switch[data-on="true"]::after{left:28px}
-  .copy{margin-left:10px}
-  #confetti{position:fixed;inset:0;pointer-events:none}
-  .searchbar{display:flex;gap:8px;margin-top:6px}
-  input[type="text"]{flex:1;padding:10px 12px;border-radius:10px;border:1px solid color-mix(in oklab, var(--ink) 15%, transparent);background:color-mix(in oklab, var(--panel) 95%, transparent);color:var(--ink)}
+  .badge{font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.22)}
+  [data-theme="light"] .badge{border-color:rgba(0,0,0,.18)}
   mark{padding:0 3px;border-radius:4px}
-  .draggable{
-    display:flex;gap:10px;flex-wrap:wrap;
+
+  /* Quiz */
+  .quiz{display:grid;gap:10px}
+  .q{padding:12px;border-radius:12px;border:1px dashed rgba(255,255,255,.3)}
+  [data-theme="light"] .q{border-color:rgba(0,0,0,.15)}
+  .btn{
+    border:1px solid rgba(255,255,255,.25);
+    background:linear-gradient(180deg, rgba(255,255,255,.15), rgba(255,255,255,.08));
+    padding:8px 12px;border-radius:10px;color:var(--ink);cursor:pointer;transition:transform .15s ease;
   }
-  .drag{
-    user-select:none;touch-action:none;
-    padding:10px 12px;border-radius:10px;border:1px solid color-mix(in oklab, var(--ink) 15%, transparent);
-    background:color-mix(in oklab, var(--panel) 95%, transparent);
-    cursor:grab;box-shadow:var(--shadow)
-  }
-  .dropzone{min-height:48px;border:2px dashed color-mix(in oklab, var(--accent) 35%, transparent);border-radius:12px;padding:10px}
-  .badge{font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid color-mix(in oklab, var(--ink) 20%, transparent)}
+  [data-theme="light"] .btn{border-color:rgba(0,0,0,.12);background:linear-gradient(180deg, rgba(0,0,0,.04), rgba(0,0,0,.02))}
+  .btn:hover{transform:translateY(-1px)}
+  .ok{outline: var(--ring)}
+  .warn{box-shadow:var(--ring)}
+  .muted{color:var(--muted)}
 </style>
 </head>
 <body>
-<canvas id="confetti"></canvas>
 <header class="wrap">
   <div class="toolbar">
     <div class="title">
@@ -111,7 +118,7 @@
     </div>
     <div class="toggle">
       <span>Light</span>
-      <div class="switch" id="themeSwitch" role="switch" aria-checked="false" tabindex="0" title="Toggle theme"></div>
+      <div id="themeSwitch" class="switch" role="switch" aria-checked="false" tabindex="0" title="Toggle theme"></div>
       <span>Dark</span>
     </div>
   </div>
@@ -125,8 +132,13 @@
       <button class="tab" role="tab" aria-selected="false" data-target="#quiz">Quick Quiz</button>
     </div>
 
-    <div id="concise" class="section active" role="region" aria-labelledby="Concise">
-      <p><span class="em">Shyama Sangeet</span> buli kowa hoy devotional songs dedicated to <span class="hl" data-tip="Maa = Mother; Kali = Hindu goddess of divine power and transformation">Maa Kali</span>. Eitu ek <b>Bhakti sangeet</b> branch jate devotees express kore love, fear, surrender aru deep devotion.</p>
+    <!-- Concise -->
+    <div id="concise" class="section active" role="region">
+      <p>
+        <mark>Shyama Sangeet</mark> buli kowa hoy devotional songs dedicated to
+        <span class="tip" data-tip="Maa = Mother; Kali = Hindu goddess of power">Maa Kali</span>.
+        Eitu ek <b>Bhakti sangeet</b> branch jate devotees express kore love, fear, surrender aru deep devotion.
+      </p>
       <p>Short-t: it’s a <i>heart-to-heart conversation</i> between devotee aru Maa Kali.</p>
       <div class="foot">
         <div class="pill"><span class="badge">Englishese</span> compact</div>
@@ -134,61 +146,54 @@
       </div>
     </div>
 
-    <div id="expanded" class="section" role="region" aria-labelledby="Expanded">
-      <div class="searchbar">
-        <input id="search" type="text" placeholder="Search & highlight keywords (e.g., Kali, devotion, Bhakti)"/>
-        <button class="btn" id="clearHL">Clear</button>
-      </div>
-      <p>Shyama Sangeet buli kowa hoy devotional songs dedicated to <span class="tip" data-tip="Kali is addressed as a compassionate-yet-fierce Mother.">Maa Kali</span>. Eitu ek Bhakti sangeet branch jate devotee-bur express kore <b>love</b>, <b>fear</b>, <b>surrender</b>, aru <b>deep devotion</b> towards Mother Kali. Songs-bur usually thake deeper tone, reflecting faith in divine power.</p>
-      <p>Bengali culture-t, Shyama Sangeet-or ek special place ase—specially <span class="tip" data-tip="Shakta = tradition centered on the worship of Shakti (Divine feminine power).">Shakta tradition</span> aru <span class="tip" data-tip="Annual festival celebrating Goddess Kali.">Kali Puja</span>-r somoyot. Poetically, Kali-k “Mother” buli address kora hoy, aru devotees-bur nijor pain, hope, aru prayer for liberation share kore.</p>
-      <details>
-        <summary>Why “Englishese” works for this topic</summary>
-        <ul>
-          <li>Captures cultural nuance without breaking flow.</li>
-          <li>Lets Assamese/English terms sit side-by-side for memory hooks.</li>
-          <li>Good for quick recall: <i>term → sense → example</i>.</li>
-        </ul>
-      </details>
-      <div class="foot">
-        <div class="pill"><span class="badge">Mode</span> expanded explainer</div>
-        <button class="btn copy" data-copy="#expanded">Copy Section</button>
-      </div>
+    <!-- Expanded -->
+    <div id="expanded" class="section" role="region">
+      <p>
+        <b>What it is:</b> Devotional music focused on Mother Kali within the Shakta stream of Bhakti.
+        Words mix tenderness and awe—<span class="tip" data-tip="Prem = love; Bhoy = fear">prem &amp; bhoy</span>—ending in
+        <span class="tip" data-tip="Shoronagoti = surrender">shoronagoti</span>.
+      </p>
+      <p>
+        <b>Where you’ll hear it:</b> Especially during <span class="tip" data-tip="Festival honoring Goddess Kali">Kali Puja</span>,
+        temple gatherings, and home worship—sung like a personal letter to the Divine.
+      </p>
+      <p class="muted">Double-click the underlined bits for quick definitions.</p>
     </div>
 
-    <div id="quiz" class="section" role="region" aria-labelledby="Quiz">
-      <p>Test yourself. Drag the <b>cards</b> into the right box: <span class="badge">Belongs to Shyama Sangeet</span> vs <span class="badge">Doesn’t</span>.</p>
-      <div class="draggable" id="cards">
-        <div class="drag" draggable="true" data-answer="in">Devotional songs to Maa Kali</div>
-        <div class="drag" draggable="true" data-answer="in">Part of Bhakti tradition</div>
-        <div class="drag" draggable="true" data-answer="out">Purely instrumental EDM</div>
-        <div class="drag" draggable="true" data-answer="in">Themes: love, fear, surrender</div>
-        <div class="drag" draggable="true" data-answer="out">Holi folk specific only</div>
-        <div class="drag" draggable="true" data-answer="in">Prominent in Kali Puja</div>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px">
-        <div>
-          <h4>Belongs to Shyama Sangeet</h4>
-          <div class="dropzone" id="zone-in" aria-label="Drop answers that belong"></div>
+    <!-- Quiz -->
+    <div id="quiz" class="section" role="region">
+      <div class="quiz">
+        <div class="q">
+          <div><b>Q1.</b> Shyama Sangeet focuses on Goddess Kali. True or False?</div>
+          <div style="margin-top:6px">
+            <button class="btn" data-a="true">True</button>
+            <button class="btn" data-a="false">False</button>
+          </div>
         </div>
-        <div>
-          <h4>Doesn’t belong</h4>
-          <div class="dropzone" id="zone-out" aria-label="Drop answers that do not belong"></div>
+        <div class="q">
+          <div><b>Q2.</b> It’s usually performed during tech conferences. True or False?</div>
+          <div style="margin-top:6px">
+            <button class="btn" data-a="false">True</button>
+            <button class="btn" data-a="true">False</button>
+          </div>
         </div>
-      </div>
-
-      <div class="foot">
-        <div class="pill"><span class="badge">Score</span> <span id="score">0</span> / 6</div>
-        <div>
-          <button class="btn" id="reset">Reset</button>
-          <button class="btn" id="celebrate">Celebrate</button>
+        <div class="q">
+          <div><b>Q3.</b> Themes include love, fear, and surrender. True or False?</div>
+          <div style="margin-top:6px">
+            <button class="btn" data-a="true">True</button>
+            <button class="btn" data-a="false">False</button>
+          </div>
+        </div>
+        <div class="foot">
+          <div><span class="badge">Score</span> <span id="score">0</span> / 3</div>
+          <button id="reset" class="btn">Reset</button>
         </div>
       </div>
     </div>
   </section>
 
   <aside class="card">
-    <h3>Quick facts</h3>
+    <h3 style="margin-top:0">Quick facts</h3>
     <ul>
       <li><b>Focus:</b> Devotion to Goddess Kali.</li>
       <li><b>Tradition:</b> Shakta stream of Bhakti.</li>
@@ -196,18 +201,18 @@
       <li><b>Mood:</b> Intense, intimate, surrendering.</li>
     </ul>
 
-    <h3 style="margin-top:18px">Keyboard</h3>
+    <h3 style="margin-top:16px">Keyboard</h3>
     <ul>
       <li><span class="kbd">1</span>/<span class="kbd">2</span>/<span class="kbd">3</span> — Switch tabs</li>
       <li><span class="kbd">Ctrl</span> + <span class="kbd">F</span> — Use built-in browser find</li>
       <li><span class="kbd">T</span> — Toggle theme</li>
     </ul>
 
-    <h3 style="margin-top:18px">Mini glossary</h3>
+    <h3 style="margin-top:16px">Mini glossary</h3>
     <ul>
-      <li><span class="em">Bhakti</span>: Devotional worship.</li>
-      <li><span class="em">Shakta</span>: Tradition centered on Shakti.</li>
-      <li><span class="em">Kali Puja</span>: Festival for Goddess Kali.</li>
+      <li><mark>Bhakti</mark>: Devotional worship.</li>
+      <li><mark>Shakta</mark>: Tradition centered on Shakti.</li>
+      <li><mark>Kali Puja</mark>: Festival for Goddess Kali.</li>
     </ul>
   </aside>
 </main>
@@ -220,149 +225,67 @@
 </footer>
 
 <script>
-  // Theme toggle with localStorage
+  // Theme: default dark, remember choice
   const root = document.documentElement;
-  const saved = localStorage.getItem('theme') || 'dark';
-  if(saved==='light'){root.setAttribute('data-theme','light')}
-  const switchEl = document.getElementById('themeSwitch');
-  const setSwitch = () => switchEl.setAttribute('data-on', root.getAttribute('data-theme')==='dark' ? 'false' : 'true');
-  setSwitch();
-  switchEl.addEventListener('click',()=>{
-    const nowLight = root.getAttribute('data-theme')==='light'?false:true;
-    root.setAttribute('data-theme', nowLight?'light':'dark');
-    localStorage.setItem('theme', nowLight?'light':'dark');
-    setSwitch();
-  });
-  switchEl.addEventListener('keydown',(e)=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault(); switchEl.click()} });
-
-  // Tabs
-  const tabs = document.querySelectorAll('.tab');
-  const sections = document.querySelectorAll('.section');
-  function activateTab(idx){
-    tabs.forEach((t,i)=>t.setAttribute('aria-selected', i===idx?'true':'false'));
-    sections.forEach((s,i)=>s.classList.toggle('active', i===idx));
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  if(savedTheme==='light') root.setAttribute('data-theme','light');
+  const themeSwitch = document.getElementById('themeSwitch');
+  function syncSwitch(){ themeSwitch.setAttribute('data-on', root.getAttribute('data-theme')==='light'); }
+  syncSwitch();
+  function toggleTheme(){
+    const nowLight = root.getAttribute('data-theme') !== 'light';
+    root.setAttribute('data-theme', nowLight ? 'light' : 'dark');
+    localStorage.setItem('theme', nowLight ? 'light' : 'dark');
+    syncSwitch();
   }
-  tabs.forEach((tab,i)=> tab.addEventListener('click', ()=>activateTab(i)));
-  window.addEventListener('keydown',(e)=>{
-    if(['1','2','3'].includes(e.key)) activateTab(parseInt(e.key)-1);
-    if(e.key.toLowerCase()==='t') switchEl.click();
+  themeSwitch.addEventListener('click', toggleTheme);
+  themeSwitch.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggleTheme(); }});
+
+  // Tabs + keyboard shortcuts 1/2/3 and T
+  const tabs = Array.from(document.querySelectorAll('.tab'));
+  const sections = Array.from(document.querySelectorAll('.section'));
+  function activateTab(i){
+    tabs.forEach((t,idx)=> t.setAttribute('aria-selected', idx===i ? 'true':'false'));
+    sections.forEach((s,idx)=> s.classList.toggle('active', idx===i));
+  }
+  tabs.forEach((t,i)=> t.addEventListener('click', ()=>activateTab(i)));
+  window.addEventListener('keydown', (e)=>{
+    if(e.key==='1') activateTab(0);
+    if(e.key==='2') activateTab(1);
+    if(e.key==='3') activateTab(2);
+    if(e.key.toLowerCase()==='t') toggleTheme();
   });
 
-  // Search highlight in Expanded
-  const searchInput = document.getElementById('search');
-  const clearBtn = document.getElementById('clearHL');
-  const expanded = document.getElementById('expanded');
-  const originalHTML = expanded.innerHTML;
-  function highlight(term){
-    if(!term){ expanded.innerHTML = originalHTML; attachCopyHandlers(); return; }
-    const walker = document.createTreeWalker(expanded, NodeFilter.SHOW_TEXT, null, false);
-    const nodes=[]; while(walker.nextNode()) nodes.push(walker.currentNode);
-    nodes.forEach(n=>{
-      if(n.parentElement && ['SCRIPT','STYLE'].includes(n.parentElement.tagName)) return;
-      const txt = n.nodeValue;
-      if(!txt) return;
-      const regex = new RegExp('('+term.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')+')','gi');
-      if(regex.test(txt)){
-        const span = document.createElement('span');
-        span.innerHTML = txt.replace(regex, '<mark>$1</mark>');
-        n.parentNode.replaceChild(span, n);
-      }
-    });
-  }
-  searchInput?.addEventListener('input', (e)=>{ expanded.innerHTML = originalHTML; highlight(e.target.value.trim()); attachCopyHandlers(); });
-  clearBtn?.addEventListener('click', ()=>{ expanded.innerHTML = originalHTML; attachCopyHandlers(); });
-
-  // Tooltips on .tip and .hl
+  // Tooltip via double-click on elements with .tip or <mark>
   function attachTips(){
-    document.querySelectorAll('[data-tip]').forEach(el=>{
-      el.addEventListener('dblclick',()=>{
-        alert(el.getAttribute('data-tip'));
+    document.querySelectorAll('.tip,[data-tip],mark').forEach(el=>{
+      el.addEventListener('dblclick', ()=>{
+        const msg = el.getAttribute('data-tip') || (el.textContent.trim()+": quick term");
+        alert(msg);
       });
     });
   }
   attachTips();
 
-  // Copy section
-  function attachCopyHandlers(){
-    document.querySelectorAll('.copy').forEach(btn=>{
-      btn.addEventListener('click',()=>{
-        const sel = document.querySelector(btn.getAttribute('data-copy'));
-        const tmp = sel.innerText;
-        navigator.clipboard.writeText(tmp).then(()=>{
-          btn.textContent = 'Copied!';
-          setTimeout(()=>btn.textContent='Copy Section',1200);
-        });
-      });
-    });
-  }
-  attachCopyHandlers();
-
-  // Drag & drop quiz
-  const cards = document.getElementById('cards');
-  const zoneIn = document.getElementById('zone-in');
-  const zoneOut = document.getElementById('zone-out');
-  const scoreEl = document.getElementById('score');
+  // Tiny quiz logic
   let score = 0;
-  function handleDragStart(e){ e.dataTransfer.setData('text/plain', e.target.dataset.answer); e.dataTransfer.setDragImage(e.target, 10, 10); e.target.classList.add('dragging'); }
-  function handleDragEnd(e){ e.target.classList.remove('dragging'); }
-  function handleDragOver(e){ e.preventDefault(); }
-  function handleDrop(e, zone){
-    e.preventDefault();
-    const ans = e.dataTransfer.getData('text/plain');
-    const el = document.querySelector('.drag.dragging');
-    if(!el) return;
-    zone.appendChild(el);
-    const correct = (zone===zoneIn && ans==='in') || (zone===zoneOut && ans==='out');
-    if(correct){ score++; scoreEl.textContent = score; confettiBurst(); el.style.borderColor = 'color-mix(in oklab, var(--ok) 50%, transparent)'; }
-    else{ el.style.borderColor = 'color-mix(in oklab, var(--err) 50%, transparent)'; }
-  }
-  cards.querySelectorAll('.drag').forEach(d=>{
-    d.addEventListener('dragstart', handleDragStart);
-    d.addEventListener('dragend', handleDragEnd);
-  });
-  [zoneIn, zoneOut].forEach(z=>{
-    z.addEventListener('dragover', handleDragOver);
-    z.addEventListener('drop', (e)=>handleDrop(e, z));
-  });
-  document.getElementById('reset').addEventListener('click',()=>{
-    score = 0; scoreEl.textContent = 0;
-    document.querySelectorAll('.drag').forEach(d=>{ cards.appendChild(d); d.style.borderColor=''; });
-    zoneIn.innerHTML=''; zoneOut.innerHTML='';
-  });
-
-  // Canvas confetti mini-implementation
-  const c = document.getElementById('confetti');
-  const ctx = c.getContext('2d');
-  let W,H; function resize(){ W = c.width = innerWidth; H = c.height = innerHeight; } resize(); addEventListener('resize', resize);
-  let particles=[];
-  function confettiBurst(){
-    const colors = ['#67e8f9','#a78bfa','#22c55e','#f59e0b','#ef4444'];
-    for(let i=0;i<60;i++){
-      particles.push({
-        x: W/2, y: 80, vx: (Math.random()-0.5)*6, vy: Math.random()*-6-2,
-        g: 0.12, s: Math.random()*4+2, r: Math.random()*Math.PI, cr: colors[(Math.random()*colors.length)|0], life: 180
-      });
-    }
-    if(!anim) anim = requestAnimationFrame(tick);
-  }
-  let anim=null;
-  function tick(){
-    ctx.clearRect(0,0,W,H);
-    particles.forEach(p=>{
-      p.vy += p.g; p.x += p.vx; p.y += p.vy; p.r += .05; p.life--;
-      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.r);
-      ctx.fillStyle = p.cr; ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s); ctx.restore();
+  const scoreEl = document.getElementById('score');
+  document.querySelectorAll('#quiz .btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const correct = btn.getAttribute('data-a') === 'true';
+      if(correct){
+        btn.classList.add('ok');
+        score = Math.min(3, score + 1);
+        scoreEl.textContent = score;
+      } else {
+        btn.classList.add('warn');
+      }
+      setTimeout(()=>{ btn.classList.remove('ok','warn'); }, 700);
     });
-    particles = particles.filter(p=>p.life>0 && p.y<H+40);
-    if(particles.length>0){ anim = requestAnimationFrame(tick); } else { cancelAnimationFrame(anim); anim=null; }
-  }
-  document.getElementById('celebrate').addEventListener('click', confettiBurst);
-
-  // Accessibility: focus outline for keyboard users
-  let hadKeyboardEvent = false;
-  const before = (e)=>{ hadKeyboardEvent = e.type==='keydown'; document.body.classList.toggle('kbd-focus', hadKeyboardEvent); };
-  addEventListener('keydown', before, true);
-  addEventListener('mousedown', before, true);
+  });
+  document.getElementById('reset').addEventListener('click', ()=>{
+    score = 0; scoreEl.textContent = 0;
+  });
 </script>
 </body>
 </html>
