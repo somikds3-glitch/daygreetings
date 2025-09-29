@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Shyama Sangeet — Englishese Explainer</title>
+<style>
+  :root{
+    --bg: #0b0c10;
+    --panel: #111318;
+    --ink: #eaeff3;
+    --muted:#aab4be;
+    --accent:#67e8f9;
+    --accent-2:#a78bfa;
+    --ok:#22c55e;
+    --warn:#f59e0b;
+    --err:#ef4444;
+    --shadow: 0 10px 30px rgba(0,0,0,.35);
+  }
+  [data-theme="light"]{
+    --bg:#f7fafc;
+    --panel:#ffffff;
+    --ink:#0b1220;
+    --muted:#415269;
+    --accent:#0ea5e9;
+    --accent-2:#7c3aed;
+    --shadow: 0 10px 30px rgba(16,24,40,.08);
+  }
+  html,body{height:100%}
+  body{
+    margin:0;
+    font:16px/1.55 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+    color:var(--ink);
+    background: radial-gradient(1200px 800px at 80% -10%, rgba(103,232,249,.15), transparent 60%),
+                radial-gradient(900px 600px at 0% 120%, rgba(167,139,250,.12), transparent 60%),
+                var(--bg);
+  }
+  .wrap{max-width:1100px;margin:0 auto;padding:28px}
+  header{
+    position:sticky;top:0;z-index:10;
+    background: linear-gradient(180deg, rgba(0,0,0,.5), rgba(0,0,0,0));
+    backdrop-filter: blur(6px);
+  }
+  .toolbar{
+    display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;
+  }
+  .btn, .chip{
+    border:1px solid color-mix(in oklab, var(--ink) 15%, transparent);
+    padding:10px 14px;border-radius:10px;background:color-mix(in oklab, var(--panel) 90%, transparent);
+    color:var(--ink);cursor:pointer;box-shadow:var(--shadow);transition:.2s transform;
+  }
+  .btn:hover{transform: translateY(-1px)}
+  .chip{padding:8px 10px;font-size:12px;box-shadow:none}
+  .title{
+    display:flex;gap:12px;align-items:center;flex-wrap:wrap
+  }
+  h1{font-size:28px;margin:0}
+  .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;margin-top:18px}
+  @media (max-width: 900px){.grid{grid-template-columns:1fr}}
+  .card{
+    background:linear-gradient(180deg, color-mix(in oklab, var(--panel) 90%, transparent), color-mix(in oklab, var(--panel) 70%, transparent));
+    border:1px solid color-mix(in oklab, var(--ink) 15%, transparent);
+    border-radius:16px;padding:18px;box-shadow:var(--shadow);
+  }
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .tab{border:none;background:transparent;color:var(--ink);padding:8px 12px;border-radius:10px;cursor:pointer}
+  .tab[aria-selected="true"]{background:color-mix(in oklab, var(--accent) 18%, transparent);}
+  .section{display:none}
+  .section.active{display:block;animation:fade .25s ease-in}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .kbd{font:12px ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;padding:1px 6px;border-radius:6px;background:color-mix(in oklab, var(--ink) 9%, transparent);border:1px solid color-mix(in oklab, var(--ink) 18%, transparent)}
+  .em{background: linear-gradient(90deg, color-mix(in oklab, var(--accent) 25%, transparent), transparent);
+      border-radius:6px;padding:0 6px}
+  .hl{background: color-mix(in oklab, var(--accent-2) 25%, transparent);border-radius:6px;padding:0 6px}
+  details{border:1px dashed color-mix(in oklab, var(--ink) 20%, transparent);border-radius:12px;padding:10px 12px}
+  summary{cursor:pointer}
+  .foot{margin-top:20px;font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .pill{display:inline-flex;gap:6px;align-items:center}
+  .toggle{display:inline-flex;gap:10px;align-items:center}
+  .switch{position:relative;width:52px;height:28px;background:color-mix(in oklab, var(--ink) 20%, transparent);border-radius:99px;cursor:pointer}
+  .switch::after{content:"";position:absolute;inset:4px auto 4px 4px;width:20px;border-radius:50%;background:white;transition:.2s left,.2s transform}
+  [data-theme="light"] .switch::after{background:#111}
+  .switch[data-on="true"]{background:var(--accent)}
+  .switch[data-on="true"]::after{left:28px}
+  .copy{margin-left:10px}
+  #confetti{position:fixed;inset:0;pointer-events:none}
+  .searchbar{display:flex;gap:8px;margin-top:6px}
+  input[type="text"]{flex:1;padding:10px 12px;border-radius:10px;border:1px solid color-mix(in oklab, var(--ink) 15%, transparent);background:color-mix(in oklab, var(--panel) 95%, transparent);color:var(--ink)}
+  mark{padding:0 3px;border-radius:4px}
+  .draggable{
+    display:flex;gap:10px;flex-wrap:wrap;
+  }
+  .drag{
+    user-select:none;touch-action:none;
+    padding:10px 12px;border-radius:10px;border:1px solid color-mix(in oklab, var(--ink) 15%, transparent);
+    background:color-mix(in oklab, var(--panel) 95%, transparent);
+    cursor:grab;box-shadow:var(--shadow)
+  }
+  .dropzone{min-height:48px;border:2px dashed color-mix(in oklab, var(--accent) 35%, transparent);border-radius:12px;padding:10px}
+  .badge{font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid color-mix(in oklab, var(--ink) 20%, transparent)}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<header class="wrap">
+  <div class="toolbar">
+    <div class="title">
+      <h1>Shyama Sangeet — Englishese Guide</h1>
+      <span class="chip">Interactive</span>
+      <span class="chip">Bilingual blend</span>
+    </div>
+    <div class="toggle">
+      <span>Light</span>
+      <div class="switch" id="themeSwitch" role="switch" aria-checked="false" tabindex="0" title="Toggle theme"></div>
+      <span>Dark</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap grid">
+  <section class="card">
+    <div class="tabs" role="tablist" aria-label="Modes">
+      <button class="tab" role="tab" aria-selected="true" data-target="#concise">Concise</button>
+      <button class="tab" role="tab" aria-selected="false" data-target="#expanded">Expanded</button>
+      <button class="tab" role="tab" aria-selected="false" data-target="#quiz">Quick Quiz</button>
+    </div>
+
+    <div id="concise" class="section active" role="region" aria-labelledby="Concise">
+      <p><span class="em">Shyama Sangeet</span> buli kowa hoy devotional songs dedicated to <span class="hl" data-tip="Maa = Mother; Kali = Hindu goddess of divine power and transformation">Maa Kali</span>. Eitu ek <b>Bhakti sangeet</b> branch jate devotees express kore love, fear, surrender aru deep devotion.</p>
+      <p>Short-t: it’s a <i>heart-to-heart conversation</i> between devotee aru Maa Kali.</p>
+      <div class="foot">
+        <div class="pill"><span class="badge">Englishese</span> compact</div>
+        <div>Tip: press <span class="kbd">1</span>/<span class="kbd">2</span>/<span class="kbd">3</span> to switch tabs.</div>
+      </div>
+    </div>
+
+    <div id="expanded" class="section" role="region" aria-labelledby="Expanded">
+      <div class="searchbar">
+        <input id="search" type="text" placeholder="Search & highlight keywords (e.g., Kali, devotion, Bhakti)"/>
+        <button class="btn" id="clearHL">Clear</button>
+      </div>
+      <p>Shyama Sangeet buli kowa hoy devotional songs dedicated to <span class="tip" data-tip="Kali is addressed as a compassionate-yet-fierce Mother.">Maa Kali</span>. Eitu ek Bhakti sangeet branch jate devotee-bur express kore <b>love</b>, <b>fear</b>, <b>surrender</b>, aru <b>deep devotion</b> towards Mother Kali. Songs-bur usually thake deeper tone, reflecting faith in divine power.</p>
+      <p>Bengali culture-t, Shyama Sangeet-or ek special place ase—specially <span class="tip" data-tip="Shakta = tradition centered on the worship of Shakti (Divine feminine power).">Shakta tradition</span> aru <span class="tip" data-tip="Annual festival celebrating Goddess Kali.">Kali Puja</span>-r somoyot. Poetically, Kali-k “Mother” buli address kora hoy, aru devotees-bur nijor pain, hope, aru prayer for liberation share kore.</p>
+      <details>
+        <summary>Why “Englishese” works for this topic</summary>
+        <ul>
+          <li>Captures cultural nuance without breaking flow.</li>
+          <li>Lets Assamese/English terms sit side-by-side for memory hooks.</li>
+          <li>Good for quick recall: <i>term → sense → example</i>.</li>
+        </ul>
+      </details>
+      <div class="foot">
+        <div class="pill"><span class="badge">Mode</span> expanded explainer</div>
+        <button class="btn copy" data-copy="#expanded">Copy Section</button>
+      </div>
+    </div>
+
+    <div id="quiz" class="section" role="region" aria-labelledby="Quiz">
+      <p>Test yourself. Drag the <b>cards</b> into the right box: <span class="badge">Belongs to Shyama Sangeet</span> vs <span class="badge">Doesn’t</span>.</p>
+      <div class="draggable" id="cards">
+        <div class="drag" draggable="true" data-answer="in">Devotional songs to Maa Kali</div>
+        <div class="drag" draggable="true" data-answer="in">Part of Bhakti tradition</div>
+        <div class="drag" draggable="true" data-answer="out">Purely instrumental EDM</div>
+        <div class="drag" draggable="true" data-answer="in">Themes: love, fear, surrender</div>
+        <div class="drag" draggable="true" data-answer="out">Holi folk specific only</div>
+        <div class="drag" draggable="true" data-answer="in">Prominent in Kali Puja</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px">
+        <div>
+          <h4>Belongs to Shyama Sangeet</h4>
+          <div class="dropzone" id="zone-in" aria-label="Drop answers that belong"></div>
+        </div>
+        <div>
+          <h4>Doesn’t belong</h4>
+          <div class="dropzone" id="zone-out" aria-label="Drop answers that do not belong"></div>
+        </div>
+      </div>
+
+      <div class="foot">
+        <div class="pill"><span class="badge">Score</span> <span id="score">0</span> / 6</div>
+        <div>
+          <button class="btn" id="reset">Reset</button>
+          <button class="btn" id="celebrate">Celebrate</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <aside class="card">
+    <h3>Quick facts</h3>
+    <ul>
+      <li><b>Focus:</b> Devotion to Goddess Kali.</li>
+      <li><b>Tradition:</b> Shakta stream of Bhakti.</li>
+      <li><b>Occasions:</b> Often sung during Kali Puja.</li>
+      <li><b>Mood:</b> Intense, intimate, surrendering.</li>
+    </ul>
+
+    <h3 style="margin-top:18px">Keyboard</h3>
+    <ul>
+      <li><span class="kbd">1</span>/<span class="kbd">2</span>/<span class="kbd">3</span> — Switch tabs</li>
+      <li><span class="kbd">Ctrl</span> + <span class="kbd">F</span> — Use built-in browser find</li>
+      <li><span class="kbd">T</span> — Toggle theme</li>
+    </ul>
+
+    <h3 style="margin-top:18px">Mini glossary</h3>
+    <ul>
+      <li><span class="em">Bhakti</span>: Devotional worship.</li>
+      <li><span class="em">Shakta</span>: Tradition centered on Shakti.</li>
+      <li><span class="em">Kali Puja</span>: Festival for Goddess Kali.</li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="wrap" style="opacity:.9">
+  <div class="foot">
+    <div>Made for quick learning. No external libraries.</div>
+    <div>Pro tip: Double-click highlighted terms for definitions.</div>
+  </div>
+</footer>
+
+<script>
+  // Theme toggle with localStorage
+  const root = document.documentElement;
+  const saved = localStorage.getItem('theme') || 'dark';
+  if(saved==='light'){root.setAttribute('data-theme','light')}
+  const switchEl = document.getElementById('themeSwitch');
+  const setSwitch = () => switchEl.setAttribute('data-on', root.getAttribute('data-theme')==='dark' ? 'false' : 'true');
+  setSwitch();
+  switchEl.addEventListener('click',()=>{
+    const nowLight = root.getAttribute('data-theme')==='light'?false:true;
+    root.setAttribute('data-theme', nowLight?'light':'dark');
+    localStorage.setItem('theme', nowLight?'light':'dark');
+    setSwitch();
+  });
+  switchEl.addEventListener('keydown',(e)=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault(); switchEl.click()} });
+
+  // Tabs
+  const tabs = document.querySelectorAll('.tab');
+  const sections = document.querySelectorAll('.section');
+  function activateTab(idx){
+    tabs.forEach((t,i)=>t.setAttribute('aria-selected', i===idx?'true':'false'));
+    sections.forEach((s,i)=>s.classList.toggle('active', i===idx));
+  }
+  tabs.forEach((tab,i)=> tab.addEventListener('click', ()=>activateTab(i)));
+  window.addEventListener('keydown',(e)=>{
+    if(['1','2','3'].includes(e.key)) activateTab(parseInt(e.key)-1);
+    if(e.key.toLowerCase()==='t') switchEl.click();
+  });
+
+  // Search highlight in Expanded
+  const searchInput = document.getElementById('search');
+  const clearBtn = document.getElementById('clearHL');
+  const expanded = document.getElementById('expanded');
+  const originalHTML = expanded.innerHTML;
+  function highlight(term){
+    if(!term){ expanded.innerHTML = originalHTML; attachCopyHandlers(); return; }
+    const walker = document.createTreeWalker(expanded, NodeFilter.SHOW_TEXT, null, false);
+    const nodes=[]; while(walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(n=>{
+      if(n.parentElement && ['SCRIPT','STYLE'].includes(n.parentElement.tagName)) return;
+      const txt = n.nodeValue;
+      if(!txt) return;
+      const regex = new RegExp('('+term.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')+')','gi');
+      if(regex.test(txt)){
+        const span = document.createElement('span');
+        span.innerHTML = txt.replace(regex, '<mark>$1</mark>');
+        n.parentNode.replaceChild(span, n);
+      }
+    });
+  }
+  searchInput?.addEventListener('input', (e)=>{ expanded.innerHTML = originalHTML; highlight(e.target.value.trim()); attachCopyHandlers(); });
+  clearBtn?.addEventListener('click', ()=>{ expanded.innerHTML = originalHTML; attachCopyHandlers(); });
+
+  // Tooltips on .tip and .hl
+  function attachTips(){
+    document.querySelectorAll('[data-tip]').forEach(el=>{
+      el.addEventListener('dblclick',()=>{
+        alert(el.getAttribute('data-tip'));
+      });
+    });
+  }
+  attachTips();
+
+  // Copy section
+  function attachCopyHandlers(){
+    document.querySelectorAll('.copy').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const sel = document.querySelector(btn.getAttribute('data-copy'));
+        const tmp = sel.innerText;
+        navigator.clipboard.writeText(tmp).then(()=>{
+          btn.textContent = 'Copied!';
+          setTimeout(()=>btn.textContent='Copy Section',1200);
+        });
+      });
+    });
+  }
+  attachCopyHandlers();
+
+  // Drag & drop quiz
+  const cards = document.getElementById('cards');
+  const zoneIn = document.getElementById('zone-in');
+  const zoneOut = document.getElementById('zone-out');
+  const scoreEl = document.getElementById('score');
+  let score = 0;
+  function handleDragStart(e){ e.dataTransfer.setData('text/plain', e.target.dataset.answer); e.dataTransfer.setDragImage(e.target, 10, 10); e.target.classList.add('dragging'); }
+  function handleDragEnd(e){ e.target.classList.remove('dragging'); }
+  function handleDragOver(e){ e.preventDefault(); }
+  function handleDrop(e, zone){
+    e.preventDefault();
+    const ans = e.dataTransfer.getData('text/plain');
+    const el = document.querySelector('.drag.dragging');
+    if(!el) return;
+    zone.appendChild(el);
+    const correct = (zone===zoneIn && ans==='in') || (zone===zoneOut && ans==='out');
+    if(correct){ score++; scoreEl.textContent = score; confettiBurst(); el.style.borderColor = 'color-mix(in oklab, var(--ok) 50%, transparent)'; }
+    else{ el.style.borderColor = 'color-mix(in oklab, var(--err) 50%, transparent)'; }
+  }
+  cards.querySelectorAll('.drag').forEach(d=>{
+    d.addEventListener('dragstart', handleDragStart);
+    d.addEventListener('dragend', handleDragEnd);
+  });
+  [zoneIn, zoneOut].forEach(z=>{
+    z.addEventListener('dragover', handleDragOver);
+    z.addEventListener('drop', (e)=>handleDrop(e, z));
+  });
+  document.getElementById('reset').addEventListener('click',()=>{
+    score = 0; scoreEl.textContent = 0;
+    document.querySelectorAll('.drag').forEach(d=>{ cards.appendChild(d); d.style.borderColor=''; });
+    zoneIn.innerHTML=''; zoneOut.innerHTML='';
+  });
+
+  // Canvas confetti mini-implementation
+  const c = document.getElementById('confetti');
+  const ctx = c.getContext('2d');
+  let W,H; function resize(){ W = c.width = innerWidth; H = c.height = innerHeight; } resize(); addEventListener('resize', resize);
+  let particles=[];
+  function confettiBurst(){
+    const colors = ['#67e8f9','#a78bfa','#22c55e','#f59e0b','#ef4444'];
+    for(let i=0;i<60;i++){
+      particles.push({
+        x: W/2, y: 80, vx: (Math.random()-0.5)*6, vy: Math.random()*-6-2,
+        g: 0.12, s: Math.random()*4+2, r: Math.random()*Math.PI, cr: colors[(Math.random()*colors.length)|0], life: 180
+      });
+    }
+    if(!anim) anim = requestAnimationFrame(tick);
+  }
+  let anim=null;
+  function tick(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p=>{
+      p.vy += p.g; p.x += p.vx; p.y += p.vy; p.r += .05; p.life--;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.r);
+      ctx.fillStyle = p.cr; ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s); ctx.restore();
+    });
+    particles = particles.filter(p=>p.life>0 && p.y<H+40);
+    if(particles.length>0){ anim = requestAnimationFrame(tick); } else { cancelAnimationFrame(anim); anim=null; }
+  }
+  document.getElementById('celebrate').addEventListener('click', confettiBurst);
+
+  // Accessibility: focus outline for keyboard users
+  let hadKeyboardEvent = false;
+  const before = (e)=>{ hadKeyboardEvent = e.type==='keydown'; document.body.classList.toggle('kbd-focus', hadKeyboardEvent); };
+  addEventListener('keydown', before, true);
+  addEventListener('mousedown', before, true);
+</script>
+</body>
+</html>
