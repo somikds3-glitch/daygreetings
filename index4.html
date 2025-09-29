@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Smahi’s Glow-Up Playground</title>
+<meta name="theme-color" content="#5b38ff" />
+<style>
+  :root{
+    --bg1:#2a1b6e;
+    --bg2:#0d2b92;
+    --card:#0f1142cc;
+    --card-strong:#121457;
+    --text:#eaf2ff;
+    --muted:#b9c6ff;
+    --accent:#9a8cff;
+    --accent2:#6ee7ff;
+    --good:#57ffa9;
+    --warn:#ffd166;
+    --hot:#ff7aa2;
+    --shadow: 0 10px 30px rgba(0,0,0,.35);
+    --radius:18px;
+  }
+  html,body{height:100%}
+  body{
+    margin:0;
+    color:var(--text);
+    font-family: ui-rounded, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Inter, sans-serif;
+    background: radial-gradient(1200px 800px at 10% -10%, #311a9a77, transparent),
+                radial-gradient(1100px 700px at 110% 0%, #0ea5e955, transparent),
+                linear-gradient(135deg, var(--bg1), var(--bg2));
+    background-attachment: fixed;
+    overflow-x:hidden;
+  }
+  /* Subtle animated stars */
+  #stars{position:fixed; inset:0; pointer-events:none; z-index:0;}
+
+  header{
+    position:relative;
+    z-index:2;
+    padding:24px clamp(16px, 4vw, 40px);
+    display:grid;
+    gap:16px;
+  }
+  .hero{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:18px;
+    align-items:center;
+    max-width:1100px;
+    margin-inline:auto;
+    text-align:center;
+  }
+  .badge{
+    display:inline-flex; gap:10px; align-items:center;
+    background:linear-gradient(90deg,#7439ff88,#00d4ff66);
+    padding:8px 14px; border-radius:999px; font-weight:700; letter-spacing:.3px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(6px);
+  }
+  .hero h1{
+    margin:8px 0 0; font-size: clamp(28px, 5vw, 54px); line-height:1.05;
+  }
+  .hero p{
+    margin:0 auto; max-width:820px; color:var(--muted); font-size:clamp(16px, 2.2vw, 19px)
+  }
+
+  .grid{
+    position:relative; z-index:2;
+    display:grid; gap:22px;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    padding:10px clamp(16px, 4vw, 40px) 120px;
+    max-width:1200px; margin:0 auto;
+  }
+  .card{
+    background:linear-gradient(180deg, var(--card), #0b0d34cc);
+    border:1px solid #5c63ff33;
+    border-radius: var(--radius);
+    padding:20px; box-shadow:var(--shadow);
+    position:relative; overflow:hidden;
+    isolation:isolate;
+  }
+  .card h2{
+    margin:0 0 8px; font-size:20px; letter-spacing:.2px;
+  }
+  .card p{margin:0 0 12px; color:var(--muted)}
+  .tools{display:flex; flex-wrap:wrap; gap:10px; margin:8px 0 0}
+  .btn{
+    appearance:none; border:none; cursor:pointer; border-radius:12px;
+    padding:10px 14px; font-weight:700; color:#0b0d34;
+    background:linear-gradient(90deg, #91a0ff, #6ee7ff);
+    box-shadow:0 6px 20px #00000030;
+    transition: transform .08s ease, filter .2s ease;
+  }
+  .btn:hover{transform: translateY(-1px); filter:brightness(1.08)}
+  .btn:active{transform: translateY(1px)}
+  .ghost{
+    background: transparent; color:var(--text); border:1px solid #6ee7ff55;
+  }
+  .chip{
+    font-size:12px; padding:6px 8px; border-radius:10px; background:#6ee7ff22; color:var(--accent2)
+  }
+  .meter{
+    height:12px; background:#2b2f99; border-radius:999px; overflow:hidden; border:1px solid #5c63ff55
+  }
+  .meter > span{
+    display:block; height:100%; width:30%;
+    background:linear-gradient(90deg, #5bffbf, #7af7ff);
+    box-shadow: inset 0 0 10px #ffffff66;
+    transition:width .6s cubic-bezier(.22,1,.36,1);
+  }
+  .affirmation{
+    font-size:clamp(18px, 2.2vw, 22px);
+    background:#0c0e3b; border:1px dashed #6ee7ff66;
+    padding:14px; border-radius:14px; margin:8px 0 10px;
+    min-height:56px; display:flex; align-items:center; justify-content:center; text-align:center;
+  }
+  .breath-wrap{
+    display:grid; place-items:center; padding:10px 0 0;
+  }
+  .orb{
+    width:160px; aspect-ratio:1; border-radius:50%;
+    background: radial-gradient(circle at 35% 35%, #b9c6ff, #7f8cff 40%, #5b38ff 70%, #3620a6 100%);
+    box-shadow:0 15px 60px #5438ff55, inset 0 0 40px #ffffff25;
+    animation: pulse 8s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%{transform: scale(.85)} 50%{transform: scale(1.1)} 100%{transform: scale(.85)}
+  }
+  .breath-text{margin-top:10px; font-weight:800; letter-spacing:.6px}
+  .progress{
+    display:flex; gap:6px; justify-content:center; margin-top:8px
+  }
+  .dot{
+    width:8px; height:8px; border-radius:50%; background:#3341cc; box-shadow: inset 0 0 4px #ffffff33;
+  }
+  .dot.active{background:#7af7ff}
+  .tag{font-size:11px; opacity:.75}
+
+  .bingo{
+    display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;
+  }
+  .bingo .cell{
+    background:#0d1258; border:1px solid #6b72ff55; padding:14px; border-radius:12px;
+    text-align:center; cursor:pointer; user-select:none; transition: transform .08s ease, background .2s;
+  }
+  .bingo .cell.active{
+    background:linear-gradient(180deg, #2730a8, #1f2aa8);
+    outline:2px solid #6ee7ffaa; transform:translateY(-1px);
+  }
+
+  .jar{display:flex; gap:10px; margin-top:10px}
+  .jar input{flex:1; border-radius:12px; padding:10px 12px; border:1px solid #6ee7ff55; background:#0c0e3b; color:var(--text)}
+  .notes{display:grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap:10px; margin-top:10px}
+  .note{
+    background:#101454; border:1px solid #5b63ff44; border-radius:12px; padding:12px; position:relative
+  }
+  .note .del{
+    position:absolute; top:8px; right:8px; border:none; background:#ff6b6b; color:#081132;
+    border-radius:999px; width:22px; height:22px; font-weight:900; cursor:pointer;
+  }
+
+  .compliment{font-weight:800}
+  .status{font-size:13px; color:var(--muted)}
+
+  .canvas-wrap{border:1px dashed #6ee7ff66; border-radius:14px; overflow:hidden; background:#0c0e3b}
+  canvas{display:block; width:100%; height:260px}
+
+  footer{
+    position:relative; z-index:2; text-align:center; padding:20px; color:#b9c6ff99;
+  }
+
+  /* floating corner CTA */
+  .corner{
+    position:fixed; right:16px; bottom:16px; z-index:3; display:flex; flex-direction:column; gap:10px;
+  }
+  .corner .btn{box-shadow:0 10px 30px #0007}
+
+  /* Pop the doubts mini-game */
+  .balloons{display:flex; flex-wrap:wrap; gap:10px; margin-top:6px}
+  .balloon{
+    --h: 46;
+    background: hsl(var(--h), 90%, 60%);
+    color:#0a0a23;
+    border-radius:999px;
+    padding:10px 14px;
+    display:inline-flex; align-items:center; gap:8px;
+    cursor:pointer; user-select:none;
+    box-shadow: inset 0 -6px 0 #00000022, 0 8px 20px #0005;
+    transition: transform .08s ease, opacity .2s ease, filter .2s ease;
+  }
+  .balloon:hover{transform: translateY(-2px); filter:brightness(1.1)}
+  .balloon.pop{transform: scale(.85) rotate(-6deg); opacity:.2; text-decoration: line-through}
+
+  /* small screens tidy */
+  @media (max-width:540px){
+    .bingo{grid-template-columns: repeat(2, 1fr)}
+  }
+
+</style>
+</head>
+<body>
+<canvas id="stars" aria-hidden="true"></canvas>
+
+<header>
+  <div class="hero">
+    <span class="badge">🌌 Hey <strong id="nameTag">Smahi</strong> — welcome to the Anti-Existential Crisis Zone</span>
+    <h1>You’re not “lost,” you’re loading new levels.</h1>
+    <p>Quick adventures to remind your brain that you’re capable, hilarious, and wildly alive.
+      Two rules: <em>play first</em>, overthink later. If you smile even once, that’s a certified W.</p>
+    <div class="tools" role="group" aria-label="quick actions">
+      <button class="btn" id="startConfetti">Instant Win 🎉</button>
+      <button class="btn ghost" id="toggleAmbient">Ambient Glow ✨</button>
+      <span class="chip">Purple-Blue comfort mode engaged</span>
+    </div>
+  </div>
+</header>
+
+<main class="grid">
+  <!-- 1. Breathing coach -->
+  <section class="card" id="breath">
+    <h2>1) 3-2-4 Breathing Coach</h2>
+    <p>Follow the orb. Inhale <strong>3</strong>, hold <strong>2</strong>, exhale <strong>4</strong>. Four rounds. Your nervous system: “ahhh.”</p>
+    <div class="breath-wrap">
+      <div class="orb" aria-hidden="true"></div>
+      <div class="breath-text" id="breathText">Ready?</div>
+      <div class="progress" aria-label="rounds">
+        <span class="dot" id="r1"></span><span class="dot" id="r2"></span><span class="dot" id="r3"></span><span class="dot" id="r4"></span>
+      </div>
+      <div class="tools">
+        <button class="btn" id="startBreath">Start Cycle 🫁</button>
+        <span class="tag" id="breathStatus">0 / 4</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Confidence Meter -->
+  <section class="card">
+    <h2>2) Confidence Dial</h2>
+    <p>Slide till the voice in your head goes “okay fine, we’re actually awesome.”</p>
+    <input type="range" id="dial" min="0" max="100" value="30" style="width:100%">
+    <div class="meter" aria-hidden="true"><span id="meterFill"></span></div>
+    <p class="status" id="dialMsg">Warming up the greatness engines…</p>
+  </section>
+
+  <!-- 3. Affirmation generator -->
+  <section class="card">
+    <h2>3) Affirmation Shuffle</h2>
+    <p>Hit shuffle. Read it out loud. Bonus: superhero pose for 10 seconds.</p>
+    <div id="aff" class="affirmation">“Loading compliments from the universe…”</div>
+    <div class="tools">
+      <button class="btn" id="shuffleAff">Shuffle 🔀</button>
+      <button class="btn ghost" id="copyAff" title="Copy to clipboard">Copy 📋</button>
+    </div>
+  </section>
+
+  <!-- 4. Tiny Wins Bingo -->
+  <section class="card">
+    <h2>4) Tiny Wins Bingo</h2>
+    <p>Tap the ones you’ve done today. Three in a row = confetti. Because of course.</p>
+    <div class="bingo" id="bingo"></div>
+    <p class="status" id="bingoStatus">0 checked · progress tracked locally</p>
+  </section>
+
+  <!-- 5. Gratitude Jar -->
+  <section class="card">
+    <h2>5) Gratitude Jar</h2>
+    <p>Small thanks, big mood. Toss a note in the jar. It sticks around.</p>
+    <div class="jar">
+      <input id="gratInput" placeholder="I’m grateful for…" />
+      <button class="btn" id="addGrat">Add 💌</button>
+    </div>
+    <div class="notes" id="notes"></div>
+  </section>
+
+  <!-- 6. Pop the Doubts -->
+  <section class="card">
+    <h2>6) Pop the Doubts</h2>
+    <p>These balloons are fake problems. Tap to pop. Your brain loves visual metaphors.</p>
+    <div class="balloons" id="balloons"></div>
+    <p class="status" id="popStatus">Clear the board to unlock a secret compliment.</p>
+  </section>
+
+  <!-- 7. Doodle Pad -->
+  <section class="card">
+    <h2>7) Doodle Pad</h2>
+    <p>Draw the feeling, then draw yourself high-fiving it. Therapeutic nonsense.</p>
+    <div class="canvas-wrap">
+      <canvas id="pad" width="900" height="520" aria-label="doodle canvas"></canvas>
+    </div>
+    <div class="tools">
+      <input type="range" id="size" min="2" max="30" value="6" />
+      <button class="btn" id="clear">Clear 🧽</button>
+      <button class="btn ghost" id="save">Save PNG 💾</button>
+      <span class="tag">Tip: hold mouse / your finger to draw</span>
+    </div>
+  </section>
+</main>
+
+<div class="corner">
+  <button class="btn" id="pepTalk">Quick Pep Talk 💫</button>
+  <button class="btn ghost" id="scrollTop">Back to Top ⬆</button>
+</div>
+
+<footer>
+  Made with unreasonable faith in you. If existential dread calls again, send it to voicemail.
+</footer>
+
+<!-- Confetti & Logic -->
+<script>
+  // —— Tiny helper: element makers
+  const $ = sel => document.querySelector(sel);
+  const $$ = sel => [...document.querySelectorAll(sel)];
+
+  // Personalize name if "c smahi" appears in query string (optional)
+  (() => {
+    const params = new URLSearchParams(location.search);
+    const nm = params.get("name") || "Smahi";
+    $("#nameTag").textContent = nm.charAt(0).toUpperCase()+nm.slice(1);
+  })();
+
+  // —— Animated starfield
+  (function stars(){
+    const c = document.getElementById('stars');
+    const x = c.getContext('2d');
+    let w,h,particles=[];
+    function resize(){ w = c.width = innerWidth; h = c.height = innerHeight; }
+    function init(){
+      particles = Array.from({length: Math.min(240, Math.floor(w*h/9000))}, () => ({
+        x: Math.random()*w,
+        y: Math.random()*h,
+        r: Math.random()*1.2+0.2,
+        s: Math.random()*0.4+0.1
+      }));
+    }
+    function tick(){
+      x.clearRect(0,0,w,h);
+      x.fillStyle = '#ffffffcc';
+      for(const p of particles){
+        p.y += p.s; if(p.y > h) p.y = -4, p.x = Math.random()*w;
+        x.beginPath(); x.arc(p.x, p.y, p.r, 0, Math.PI*2); x.fill();
+      }
+      requestAnimationFrame(tick);
+    }
+    addEventListener('resize', ()=>{ resize(); init(); });
+    resize(); init(); tick();
+  })();
+
+  // —— Confetti (simple, performant)
+  const Confetti = (() => {
+    let active = false;
+    const canvas = document.createElement('canvas');
+    canvas.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:5';
+    const ctx = canvas.getContext('2d');
+    let W,H, pieces=[];
+    function resize(){ W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
+    function burst(count=180){
+      if(!active){ document.body.appendChild(canvas); resize(); active=true; }
+      for(let i=0;i<count;i++){
+        pieces.push({
+          x: W/2, y: H/3, w: 8+Math.random()*6, h: 10+Math.random()*8,
+          vx: (Math.random()-0.5)*8, vy: -Math.random()*10-6,
+          rot: Math.random()*Math.PI, vr: (Math.random()-0.5)*0.3,
+          color: `hsl(${Math.random()*360},95%,70%)`, life: 120+Math.random()*60
+        });
+      }
+      if(pieces.length>0) animate();
+    }
+    let animating=false;
+    function animate(){
+      if(animating) return; animating=true;
+      (function frame(){
+        animating=false;
+        ctx.clearRect(0,0,W,H);
+        pieces = pieces.filter(p => p.life>0);
+        for(const p of pieces){
+          p.life--; p.vy += 0.18; p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+          ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+          ctx.fillStyle = p.color; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); ctx.restore();
+        }
+        if(pieces.length){ animating=true; requestAnimationFrame(frame); }
+        else { canvas.remove(); active=false; }
+      })();
+    }
+    addEventListener('resize', resize);
+    return { burst };
+  })();
+
+  $('#startConfetti').addEventListener('click', ()=> {
+    Confetti.burst(220);
+    toast("Look at you collecting wins like limited editions. 🎉");
+  });
+
+  // —— Ambient toggle (breathing orb glow intensity)
+  let ambient = true;
+  $('#toggleAmbient').addEventListener('click', ()=>{
+    ambient = !ambient;
+    document.body.style.backgroundAttachment = ambient ? 'fixed' : 'scroll';
+    toast(ambient ? "Ambient glow on. Soft vibes restored." : "Ambient glow off. Crisp focus mode.");
+  });
+
+  // —— Breathing Coach 3-2-4
+  (function breath(){
+    const text = $('#breathText');
+    const dots = [$('#r1'),$('#r2'),$('#r3'),$('#r4')];
+    const status = $('#breathStatus');
+    let round = 0, running=false, timer=null;
+
+    function phase(label, ms){
+      text.textContent = label;
+      return new Promise(res => { clearTimeout(timer); timer = setTimeout(res, ms); });
+    }
+
+    async function run(){
+      if(running) return;
+      running = true; round = 0; dots.forEach(d=>d.classList.remove('active'));
+      status.textContent = '0 / 4';
+      for(let i=0;i<4;i++){
+        await phase('Inhale •••', 3000);
+        await phase('Hold ••', 2000);
+        await phase('Exhale ••••', 4000);
+        round++; dots[i].classList.add('active'); status.textContent = `${round} / 4`;
+      }
+      running=false; Confetti.burst(140);
+      toast("Body: calm. Brain: unlocked. 🫶");
+    }
+    $('#startBreath').addEventListener('click', run);
+  })();
+
+  // —— Confidence Dial
+  (function dial(){
+    const r = $('#dial'), fill = $('#meterFill'), msg = $('#dialMsg');
+    const lines = [
+      "Warming up the greatness engines…",
+      "Reminder: past-you survived 100% of your worst days.",
+      "Plot twist: you’re actually qualified.",
+      "Main character energy detected.",
+      "Confidence: excessive (the good kind)."
+    ];
+    function update(){
+      const v = +r.value;
+      fill.style.width = v+'%';
+      let t = lines[0];
+      if(v>15) t=lines[1];
+      if(v>40) t=lines[2];
+      if(v>70) t=lines[3];
+      if(v>92) t=lines[4];
+      msg.textContent = t;
+    }
+    r.addEventListener('input', update); update();
+  })();
+
+  // —— Affirmation Shuffle
+  (function aff(){
+    const A = [
+      "You don’t need to earn rest. You already qualify.",
+      "Clarity comes from motion, not meditation on the couch… though the couch is nice.",
+      "You are allowed to take up space and then some.",
+      "Even when you feel behind, your story is right on time.",
+      "Perfection can Uber home; we’re shipping joy instead.",
+      "Your future self is watching like: ‘legend.’",
+      "Evidence-based fact: you figure things out.",
+      "You’re not stuck—just pre-breakthrough.",
+      "Today’s assignment: be 10% kinder to you.",
+      "You’ve got range: soft heart, sharp mind."
+    ];
+    const box = $('#aff');
+    function show(text){
+      // typewriter
+      box.textContent = "";
+      let i=0;
+      const id = setInterval(()=>{
+        box.textContent += text.charAt(i++);
+        if(i>=text.length) clearInterval(id);
+      }, 14);
+    }
+    function shuffle(){ show("“"+ A[Math.floor(Math.random()*A.length)] +"”"); }
+    $('#shuffleAff').addEventListener('click', ()=>{ shuffle(); boop(); });
+    $('#copyAff').addEventListener('click', async ()=>{
+      try{
+        await navigator.clipboard.writeText(box.textContent.replace(/^“|”$/g,""));
+        toast("Copied. Stick it anywhere your doubts lurk.");
+      }catch(e){ toast("Clipboard said ‘nah’. Try again?"); }
+    });
+    shuffle();
+  })();
+
+  // —— Tiny Wins Bingo
+  (function bingo(){
+    const goals = [
+      "Drank water","Stretched 1 min","Went outside",
+      "Answered one message","Deep breath x3","Ate real food",
+      "Tiny tidy-up","Touched a task","Moved body",
+    ];
+    const grid = $('#bingo'), stat = $('#bingoStatus');
+    let checked = JSON.parse(localStorage.getItem('bingo-checked')||'[]');
+    function render(){
+      grid.innerHTML='';
+      goals.forEach((g,i)=>{
+        const d = document.createElement('div');
+        d.className = 'cell' + (checked.includes(i)?' active':'');
+        d.textContent = g;
+        d.addEventListener('click', ()=>{
+          const idx = checked.indexOf(i);
+          if(idx>-1) checked.splice(idx,1); else checked.push(i);
+          localStorage.setItem('bingo-checked', JSON.stringify(checked));
+          render(); checkWin();
+        });
+        grid.appendChild(d);
+      });
+      stat.textContent = `${checked.length} checked · progress tracked locally`;
+    }
+    function checkWin(){
+      const rows = [
+        [0,1,2],[3,4,5],[6,7,8], // rows
+        [0,3,6],[1,4,7],[2,5,8], // cols
+        [0,4,8],[2,4,6]          // diag
+      ];
+      if(rows.some(r=>r.every(i=>checked.includes(i)))){
+        Confetti.burst(180); toast("Bingo! Tiny wins, big momentum.");
+      }
+    }
+    render();
+  })();
+
+  // —— Gratitude Jar
+  (function jar(){
+    const input = $('#gratInput'), add = $('#addGrat'), wrap = $('#notes');
+    let notes = JSON.parse(localStorage.getItem('grat-notes')||'[]');
+
+    function render(){
+      wrap.innerHTML='';
+      if(!notes.length){
+        const e = document.createElement('div');
+        e.className='status'; e.textContent="Jar is empty (for now). Toss a note in.";
+        wrap.appendChild(e); return;
+      }
+      notes.forEach((t,idx)=>{
+        const n = document.createElement('div'); n.className='note';
+        n.innerHTML = `<button class="del" title="remove">×</button><div>${escapeHtml(t)}</div>`;
+        n.querySelector('.del').addEventListener('click', ()=>{
+          notes.splice(idx,1); save();
+        });
+        wrap.appendChild(n);
+      });
+    }
+    function save(){ localStorage.setItem('grat-notes', JSON.stringify(notes)); render(); }
+    add.addEventListener('click', ()=>{
+      const v = input.value.trim();
+      if(!v) return toast("Write a tiny thing. The tinier the better.");
+      notes.unshift(v); input.value=''; save(); boop();
+    });
+    render();
+  })();
+
+  // —— Pop the Doubts (balloons)
+  (function doubts(){
+    const messages = ["Not enough","Too late","What if","Imposter","Fail","Overthink"];
+    const board = $('#balloons'), status = $('#popStatus');
+    function render(){
+      board.innerHTML='';
+      messages.forEach((m,i)=>{
+        const b = document.createElement('button');
+        b.className='balloon'; b.style.setProperty('--h', 300 + (i*30));
+        b.innerHTML = `🎈 <span>${m}</span>`;
+        b.addEventListener('click', ()=>{
+          b.classList.add('pop'); b.disabled=true; boop();
+          setTimeout(()=> b.remove(), 300);
+          if(board.querySelectorAll('.balloon:not(.pop)').length<=1){
+            setTimeout(()=>{
+              Confetti.burst(200);
+              $('#aff').textContent = "“Breaking news: Smahi effortlessly outsmarts fake problems.”";
+              status.textContent = "Cleared. Here’s your secret compliment: you’re quietly unstoppable.";
+            }, 200);
+          }
+        });
+        board.appendChild(b);
+      });
+    }
+    render();
+  })();
+
+  // —— Doodle Pad
+  (function pad(){
+    const c = document.getElementById('pad');
+    const ctx = c.getContext('2d');
+    let drawing=false, last=null;
+    function pos(e){
+      const r = c.getBoundingClientRect();
+      const x = (e.touches?e.touches[0].clientX:e.clientX) - r.left;
+      const y = (e.touches?e.touches[0].clientY:e.clientY) - r.top;
+      return {x: x * (c.width/r.width), y: y * (c.height/r.height)};
+    }
+    function start(e){ drawing=true; last=pos(e); }
+    function move(e){
+      if(!drawing) return;
+      const p = pos(e);
+      ctx.lineCap='round'; ctx.lineJoin='round';
+      ctx.strokeStyle = '#b9c6ff';
+      ctx.lineWidth = +$('#size').value;
+      ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke();
+      last=p;
+      e.preventDefault();
+    }
+    function end(){ drawing=false; }
+    c.addEventListener('mousedown', start);
+    c.addEventListener('mousemove', move);
+    addEventListener('mouseup', end);
+    c.addEventListener('touchstart', start, {passive:false});
+    c.addEventListener('touchmove', move, {passive:false});
+    addEventListener('touchend', end);
+    $('#clear').addEventListener('click', ()=>{ ctx.clearRect(0,0,c.width,c.height); });
+    $('#save').addEventListener('click', ()=>{
+      const a = document.createElement('a');
+      a.download = 'smahi-doodle.png'; a.href = c.toDataURL('image/png'); a.click();
+      toast("Saved. Frame-worthy, obviously.");
+    });
+  })();
+
+  // —— Pep talk
+  $('#pepTalk').addEventListener('click', ()=>{
+    const lines = [
+      "You’re not behind; you’re building depth.",
+      "Rest is part of the work. Also snacks.",
+      "You’ve done harder things. Receipts exist.",
+      "Future-you is so grateful you showed up today."
+    ];
+    alert("Quick Pep Talk:\n\n• " + lines.join("\n• ") + "\n\nTake one small step. Momentum will flirt back.");
+  });
+
+  // —— Scroll to top
+  $('#scrollTop').addEventListener('click', ()=> scrollTo({top:0, behavior:'smooth'}));
+
+  // —— Utilities
+  function toast(msg){
+    const t = document.createElement('div');
+    t.textContent = msg;
+    t.style.cssText = `
+      position:fixed; left:50%; transform:translateX(-50%);
+      bottom:24px; background:linear-gradient(90deg,#91a0ff,#6ee7ff);
+      color:#061038; font-weight:800; padding:12px 16px; border-radius:12px;
+      box-shadow:0 10px 30px #0008; z-index:6
+    `;
+    document.body.appendChild(t);
+    setTimeout(()=> t.remove(), 2600);
+  }
+  function boop(){
+    try{
+      const ctx = new (window.AudioContext||window.webkitAudioContext)();
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type='triangle'; o.frequency.setValueAtTime(720, ctx.currentTime);
+      g.gain.setValueAtTime(0.0001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime+0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+0.15);
+      o.connect(g).connect(ctx.destination); o.start(); o.stop(ctx.currentTime+0.16);
+    }catch(e){}
+  }
+  function escapeHtml(s){ return s.replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
+</script>
+</body>
+</html>
