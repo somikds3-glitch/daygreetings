@@ -4,21 +4,27 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Letters from Somik & Family — Shubho Bijoya Mahadashami</title>
-<meta name="description" content="Pick a letter from Somik & Family to reveal a festive Shubho Bijoya Mahadashami message. Mobile-first, interactive, and share-friendly." />
+<meta name="description" content="Pick a letter from Somik & Family to reveal a festive Shubho Bijoya Mahadashami message. Foreground confetti, royal purple background, mobile-first." />
 <style>
   :root{
-    --bg:#fff8ef; --fg:#222; --muted:#6c6c6c;
-    --panel:#fffdf8; --line:#eadfce; --brand:#b22222; --accent:#f0b429;
-    --radius:16px; --shadow:0 10px 28px rgba(0,0,0,.08);
-    --touch:56px; /* comfortable tap target */
-  }
-  [data-theme="dark"]{
-    --bg:#121314; --fg:#e7e7e7; --muted:#b8b8b8; --panel:#17191b; --line:#2a2d30;
+    /* Royal purple theme */
+    --bg:#7851A9;                 /* royal purple */
+    --fg:#ffffff;                 /* main text on purple */
+    --muted:#e8dbff;              /* soft lavender text */
+    --panel:rgba(255,255,255,.09);/* translucent cards on purple */
+    --line:rgba(255,255,255,.18); /* hairline borders */
+    --brand:#ffd166;              /* marigold accent */
+    --accent:#ff8fab;             /* pink accent */
+    --radius:16px; --shadow:0 10px 28px rgba(0,0,0,.28);
+    --touch:56px;
   }
   html,body{height:100%}
   body{
     margin:0; background:var(--bg); color:var(--fg);
     font:16px/1.7 system-ui,-apple-system,Segoe UI,Roboto,Noto Sans,Arial,"Apple Color Emoji","Segoe UI Emoji";
+    background-image:
+      radial-gradient(1200px 600px at -10% -20%, rgba(255,255,255,.06), transparent 60%),
+      radial-gradient(1000px 600px at 110% 0%, rgba(255,255,255,.05), transparent 60%);
   }
   header{
     position:sticky; top:0; z-index:10;
@@ -34,7 +40,7 @@
     border-radius:12px; padding:10px 12px; font:inherit; min-height:var(--touch);
   }
   .btn{cursor:pointer; box-shadow:var(--shadow)}
-  .btn.primary{background:linear-gradient(135deg,var(--brand),#cf2c2c); color:#fff; border:none}
+  .btn.primary{background:linear-gradient(135deg,var(--brand),#ffcf66); color:#3a2a6b; border:none; font-weight:800}
   .btn.ghost{background:transparent}
   .hero{padding:14px 14px 2px}
   .hero h1{font-size:clamp(22px,5.5vw,36px); line-height:1.2; margin:0 0 6px}
@@ -56,37 +62,37 @@
   .letter:active{ transform:scale(.98) }
   .letter .seal{
     align-self:flex-end; width:44px; height:44px; border-radius:50%;
-    background:radial-gradient(circle at 30% 30%, #ffd98a, var(--accent));
-    border:2px solid color-mix(in srgb, var(--accent) 40%, var(--line));
-    display:grid; place-items:center; font-weight:900; color:#6a3c00;
-    box-shadow:inset 0 2px 6px rgba(0,0,0,.12);
+    background:radial-gradient(circle at 30% 30%, var(--brand), #f2c46d);
+    border:2px solid rgba(0,0,0,.18);
+    display:grid; place-items:center; font-weight:900; color:#3a2a6b;
+    box-shadow:inset 0 2px 6px rgba(0,0,0,.22);
   }
   .letter h3{margin:0; font-size:18px}
   .letter p{margin:6px 0 0; color:var(--muted); font-size:14px}
-  .letter.pick{ transform:scale(1.08); box-shadow:0 20px 46px rgba(0,0,0,.16) }
-  .tray.fade .letter:not(.pick){ opacity:.05; pointer-events:none }
+  .letter.pick{ transform:scale(1.08); box-shadow:0 20px 46px rgba(0,0,0,.36) }
+  .tray.fade .letter:not(.pick){ opacity:.08; pointer-events:none }
   /* Reveal stage */
   .stage{
     position:fixed; inset:auto 0 0 0; top:62px;
     display:none; place-items:center; padding:14px; z-index:20;
-    background:color-mix(in srgb, var(--bg) 88%, transparent);
+    background:color-mix(in srgb, var(--bg) 80%, transparent);
     backdrop-filter:blur(6px) saturate(120%);
   }
   .stage.show{ display:grid; }
   .card{
     width:min(840px, 92vw);
     background:var(--panel); border:1px solid var(--line); border-radius:20px;
-    box-shadow:0 22px 60px rgba(0,0,0,.18); padding:14px;
+    box-shadow:0 22px 60px rgba(0,0,0,.38); padding:14px;
   }
   .card .top{
     display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:6px;
   }
   .chip{
     border:1px dashed var(--line); padding:6px 10px; border-radius:999px; font-size:13px;
-    background:color-mix(in srgb, var(--accent) 12%, transparent); color:var(--brand); font-weight:700;
+    background:color-mix(in srgb, var(--brand) 25%, transparent); color:#3a2a6b; font-weight:800;
   }
   .msg{
-    border:1px solid var(--line); border-radius:16px; background:var(--bg); padding:14px; min-height:160px;
+    border:1px solid var(--line); border-radius:16px; background:rgba(0,0,0,.22); padding:14px; min-height:160px;
     font-size:clamp(16px, 4.5vw, 18px)
   }
   .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
@@ -94,6 +100,11 @@
   .grow{flex:1}
   .footer{padding:28px 14px; text-align:center; color:var(--muted)}
   .hint{font-size:13px; color:var(--muted)}
+  /* Foreground confetti canvas */
+  #confetti {
+    position:fixed; inset:0; pointer-events:none;
+    z-index: 999999; /* higher than everything, including dialogs */
+  }
   /* Motion respect */
   @media (prefers-reduced-motion: reduce){
     *{transition:none!important; animation:none!important}
@@ -121,7 +132,7 @@
 <section class="hero">
   <div class="wrap">
     <h1>Pick a letter. Let the message step forward.</h1>
-    <p>Each envelope carries a Shubho Bijoya Mahadashami wish from <strong>Somik & Family</strong>. Choose one to reveal. Mobile-friendly, tap-happy, no clutter.</p>
+    <p>Each envelope carries a Shubho Bijoya Mahadashami wish from <strong>Somik & Family</strong>. Choose one to reveal. Now with foreground confetti and a royal purple mood.</p>
   </div>
 </section>
 
@@ -129,7 +140,7 @@
   <div id="tray" class="tray" aria-label="Letter tray">
     <!-- Letters injected by JS -->
   </div>
-  <p class="hint">Pro tip: rotate your phone if you want more envelopes per row. Or don’t. The page adapts faster than most committees.</p>
+  <p class="hint">Mobile-first layout. Big thumbs welcome. Small pockets of joy included.</p>
 </main>
 
 <!-- Reveal stage -->
@@ -158,20 +169,24 @@
   Crafted with festive care by <strong>Somik & Family</strong>. Shubho Bijoya Mahadashami!
 </footer>
 
-<canvas id="confetti" style="position:fixed; inset:0; pointer-events:none; z-index:1"></canvas>
+<!-- Foreground confetti canvas -->
+<canvas id="confetti"></canvas>
 
 <script>
-  // Dark mode persistence
+  // Theme toggle (kept for completeness; purple is default)
   const root = document.documentElement;
-  const savedTheme = localStorage.getItem('theme');
-  if(savedTheme) root.setAttribute('data-theme', savedTheme);
   document.getElementById('theme').addEventListener('click', ()=>{
-    const next = root.getAttribute('data-theme') === 'dark' ? '' : 'dark';
-    if(next) root.setAttribute('data-theme', next); else root.removeAttribute('data-theme');
-    localStorage.setItem('theme', next);
+    // Toggle a slightly darker purple vibe
+    const on = root.dataset.alt === '1';
+    root.dataset.alt = on ? '0' : '1';
+    if(on){
+      document.body.style.background = 'var(--bg)';
+    }else{
+      document.body.style.background = '#6a45a1';
+    }
   });
 
-  // Data: multiple “letters” each with an id and a brief teaser
+  // Data: letters
   const letters = [
     { id:'L-108', title:'Autumn Light', teaser:'A gentle wish for courage and clarity.' },
     { id:'L-204', title:'Marigold Path', teaser:'Joy that blooms steadily through the year.' },
@@ -183,7 +198,7 @@
     { id:'L-889', title:'City of Art', teaser:'Kolkata’s glow, shared with you.' }
   ];
 
-  // Copy-friendly content pools
+  // Copy pools
   const copy = {
     en: {
       openers: [
@@ -231,9 +246,9 @@
     }
   };
 
-  // Build letter tray
+  // Build tray
   const tray = document.getElementById('tray');
-  letters.forEach((l, i)=>{
+  letters.forEach((l)=>{
     const el = document.createElement('button');
     el.className = 'letter';
     el.setAttribute('aria-label', `Open letter ${l.id}: ${l.title}`);
@@ -244,7 +259,10 @@
       </div>
       <div class="seal" aria-hidden="true">${String(l.id).slice(-2)}</div>
     `;
-    el.addEventListener('click', ()=>openLetter(el, l));
+    el.addEventListener('click', ()=>{
+      openLetter(el);
+      confettiBurst(220); // big burst on picking a letter
+    });
     tray.appendChild(el);
   });
 
@@ -267,13 +285,10 @@
     ].join("\n\n");
   }
 
-  function openLetter(node, data){
-    // Visual focus
+  function openLetter(node){
     tray.classList.add('fade');
     document.querySelectorAll('.letter').forEach(el=>el.classList.remove('pick'));
     node.classList.add('pick');
-
-    // Fill message and show stage
     renderMessage();
     stage.classList.add('show');
     updateLangChip();
@@ -282,10 +297,7 @@
   function updateLangChip(){
     langChip.textContent = 'Language: ' + (langSel.value === 'en' ? 'English' : langSel.value === 'bn' ? 'Bengali' : 'Bilingual');
   }
-
-  function renderMessage(){
-    messageBox.textContent = buildMsg(langSel.value);
-  }
+  function renderMessage(){ messageBox.textContent = buildMsg(langSel.value); }
 
   // Actions
   document.getElementById('again').addEventListener('click', ()=>{
@@ -298,8 +310,11 @@
     tray.classList.remove('fade');
     document.querySelectorAll('.letter').forEach(el=>el.classList.remove('pick'));
   });
-  document.getElementById('vari').addEventListener('click', renderMessage);
-  langSel.addEventListener('change', ()=>{ updateLangChip(); renderMessage(); });
+  document.getElementById('vari').addEventListener('click', ()=>{
+    renderMessage();
+    confettiBurst(140);
+  });
+  langSel.addEventListener('change', ()=>{ updateLangChip(); renderMessage(); confettiBurst(90); });
 
   // Copy / Share / Save
   document.getElementById('copy').addEventListener('click', async ()=>{
@@ -321,31 +336,31 @@
     URL.revokeObjectURL(a.href);
   });
 
-  // Speech synthesis
+  // Speech
   document.getElementById('speak').addEventListener('click', ()=>{
     if(!('speechSynthesis' in window)) { alert('Speech not supported in this browser.'); return; }
     const u = new SpeechSynthesisUtterance(messageBox.textContent);
     u.lang = (langSel.value==='bn' ? 'bn-IN' : (langSel.value==='en' ? 'en-US' : 'en-US'));
     u.rate = 0.98;
     speechSynthesis.cancel(); speechSynthesis.speak(u);
+    confettiBurst(120);
   });
 
-  // Confetti
-  const conf = document.getElementById('conf');
+  // Foreground confetti engine
   const confCan = document.getElementById('confetti');
   const ctx = confCan.getContext('2d');
-  function resize(){ confCan.width = innerWidth; confCan.height = innerHeight; }
-  addEventListener('resize', resize); resize();
+  function size(){ confCan.width = innerWidth; confCan.height = innerHeight; }
+  addEventListener('resize', size); size();
   let bits=[];
-  function splash(count=140){
-    for(let i=0;i<count;i++){
+  function spawn(n=120){
+    for(let i=0;i<n;i++){
       bits.push({
         x: Math.random()*confCan.width,
         y: -10,
         r: 3+Math.random()*5,
-        c: Math.random()>.5? '#f0b429' : '#b22222',
+        c: Math.random()<.33? '#ffd166' : (Math.random()<.5? '#ff8fab' : '#ffffff'),
         v: 2+Math.random()*3,
-        drift: (Math.random()-.5)*1.4
+        drift: (Math.random()-.5)*1.6
       });
     }
   }
@@ -353,28 +368,37 @@
     ctx.clearRect(0,0,confCan.width,confCan.height);
     bits.forEach(p=>{
       p.y += p.v; p.x += p.drift;
-      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=p.c; ctx.fill();
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle = p.c; ctx.fill();
     });
     bits = bits.filter(p=>p.y < confCan.height+16);
     requestAnimationFrame(tick);
   }
   tick();
-  conf.addEventListener('click', ()=>splash(160));
+  function confettiBurst(count=140){ spawn(count); }
+  // Confetti button still exists for manual joy
+  document.getElementById('conf').addEventListener('click', ()=>confettiBurst(200));
 
-  // Tiny toast
+  // Trigger a small burst on ANY button press to match “always on hitting the button”
+  document.addEventListener('click', (e)=>{
+    if(e.target.closest('button')) confettiBurst(40);
+  });
+
+  // Toast
   function toast(msg){
     const t = document.createElement('div');
     t.textContent = msg + ' — from Somik & Family';
     Object.assign(t.style,{
       position:'fixed', left:'50%', top:'14px', transform:'translateX(-50%)',
-      background:'var(--panel)', color:'var(--fg)', border:'1px solid var(--line)',
-      padding:'10px 12px', borderRadius:'12px', boxShadow:'var(--shadow)', zIndex:30
+      background:'rgba(0,0,0,.35)', color:'#fff', border:'1px solid var(--line)',
+      padding:'10px 12px', borderRadius:'12px', boxShadow:var(--shadow), zIndex:1000000
     });
     document.body.appendChild(t);
     setTimeout(()=>t.remove(), 1600);
   }
 
-  // First render hint: preload language chip
+  // Initial language chip and hint message
+  function updateLangChip(){ langChip.textContent = 'Language: ' + (langSel.value === 'en' ? 'English' : langSel.value === 'bn' ? 'Bengali' : 'Bilingual'); }
   updateLangChip();
 </script>
 </body>
