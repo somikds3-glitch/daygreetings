@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Shubho Bijoya Mahadashami — Interactive Wish by Somik & Family</title>
+<meta name="description" content="An interactive wishing page for Shubho Bijoya Mahadashami, lovingly built by Somik & Family." />
+<style>
+  :root{
+    --bg:#fff8ef; --fg:#222; --muted:#6b6b6b; --brand:#b22222; --accent:#f0b429;
+    --panel:#fffdf8; --line:#eadfce; --radius:14px; --shadow:0 10px 30px rgba(0,0,0,.08);
+  }
+  [data-theme="dark"]{
+    --bg:#111213; --fg:#e8e8e8; --muted:#b7b7b7; --panel:#16181a; --line:#2a2d30;
+  }
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font:16px/1.7 system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  header{padding:18px 20px; position:sticky; top:0; z-index:10; backdrop-filter:saturate(140%) blur(8px);
+    background:color-mix(in srgb, var(--bg) 90%, transparent); border-bottom:1px solid var(--line);}
+  .wrap{max-width:980px; margin:0 auto; padding:18px 20px;}
+  .brand{display:flex; gap:10px; align-items:center; font-weight:800}
+  .badge{margin-left:8px; padding:4px 10px; border-radius:999px; background:linear-gradient(135deg,var(--brand),#d23a3a); color:#fff; font-size:12px; box-shadow:var(--shadow)}
+  .hero{
+    padding:28px 20px 10px; background:
+      radial-gradient(800px 360px at 0% -10%, color-mix(in srgb, var(--accent) 25%, transparent), transparent 60%),
+      radial-gradient(800px 360px at 110% 0%, color-mix(in srgb, var(--brand) 20%, transparent), transparent 60%);
+    border-bottom:1px dashed var(--line);
+  }
+  h1{font-size:clamp(28px,4vw,44px); margin:0 0 10px; line-height:1.2}
+  p.lede{margin:0; color:var(--muted)}
+  .panel{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:16px; box-shadow:var(--shadow)
+  }
+  .grid{display:grid; gap:16px}
+  @media(min-width:860px){ .grid.cols-2{ grid-template-columns:1.2fr .8fr } }
+
+  label{font-weight:700}
+  .row{display:flex; gap:10px; flex-wrap:wrap}
+  input, select, button, textarea{
+    border:1px solid var(--line); background:var(--bg); color:var(--fg);
+    padding:10px 12px; border-radius:10px; font:inherit;
+  }
+  button{cursor:pointer; box-shadow:var(--shadow)}
+  .btn-primary{background:linear-gradient(135deg,var(--brand),#cf2c2c); color:#fff; border:none}
+  .btn-ghost{background:transparent}
+  .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+  .wishbox{min-height:120px; font-size:18px; background:var(--bg)}
+  .ticker{
+    margin-top:12px; overflow:hidden; white-space:nowrap; border:1px dashed var(--line);
+    border-radius:10px; padding:6px 10px; background:var(--panel); color:var(--brand); font-weight:800
+  }
+  .footer{padding:30px 20px; text-align:center; color:var(--muted)}
+  canvas#confetti{position:fixed; inset:0; pointer-events:none; z-index:9}
+  .credit{font-size:12px; color:var(--muted)}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+
+<header>
+  <div class="wrap brand">
+    <span aria-hidden="true" style="font-size:24px">🪔</span>
+    <span>Shubho Bijoya Mahadashami — Interactive Wish</span>
+    <span class="badge">Built by Somik & Family</span>
+    <span style="margin-left:auto"></span>
+    <button id="theme" class="btn-ghost" aria-label="Toggle dark mode">🌗</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap grid cols-2">
+    <div>
+      <h1>Celebrate, click, listen, share — and feel very congratulated.</h1>
+      <p class="lede">This playful page generates a personalized Bijoya wish in English or Bengali, speaks it aloud, showers confetti, and preps share links. Conceived and handcrafted by <strong>Somik & Family</strong> so your inbox isn’t assaulted by boring cards.</p>
+    </div>
+    <div class="panel">
+      <div class="row">
+        <div style="flex:1 1 220px">
+          <label for="yourName">Recipient name</label><br />
+          <input id="yourName" type="text" placeholder="e.g., Aisha" />
+        </div>
+        <div style="flex:1 1 160px">
+          <label for="lang">Language</label><br />
+          <select id="lang">
+            <option value="en">English</option>
+            <option value="bn">বাংলা (Bengali)</option>
+            <option value="mix">Bilingual</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="make" class="btn-primary">Generate wish</button>
+        <button id="speak" title="Hear it">🔊 Speak</button>
+        <button id="conf" title="Confetti">🎉 Confetti</button>
+        <button id="copy" title="Copy to clipboard">📋 Copy</button>
+        <button id="wa" title="Share on WhatsApp">🟢 WhatsApp</button>
+        <button id="save" title="Save as text file">💾 Save</button>
+      </div>
+      <p class="credit">Every interaction here is lovingly engineered by <strong>Somik & Family</strong>.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap grid cols-2">
+    <div class="panel">
+      <label for="wish">Your interactive wish (editable)</label>
+      <textarea id="wish" class="wishbox"></textarea>
+      <div class="ticker" id="ticker" aria-live="polite">A Bijoya greeting handcrafted by Somik & Family • Shubho Bijoya • বিজয়ার শুভেচ্ছা • Repeat after me: sweets first, then speeches •</div>
+    </div>
+    <div class="panel">
+      <h3 style="margin-top:0">Extras from Somik</h3>
+      <ul style="margin-top:6px">
+        <li>Tap <strong>Generate wish</strong> again to reshuffle tone and lines.</li>
+        <li><strong>Speak</strong> uses your device’s speech. Bengali voice availability varies by device.</li>
+        <li>Confetti is biodegradable. Digitally. Please don’t vacuum your screen.</li>
+        <li>Everything here is a greeting from <strong>Somik & Family</strong>. Share freely.</li>
+      </ul>
+      <div class="row">
+        <button id="minimal" class="btn-ghost">Minimal style</button>
+        <button id="grand" class="btn-ghost">Grand style</button>
+        <button id="heart" class="btn-ghost">Blessings style</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  Made with festive mischief by <strong>Somik & Family</strong>. Shubho Bijoya!
+</footer>
+
+<script>
+  // Theme toggle
+  const root = document.documentElement;
+  const saved = localStorage.getItem('theme');
+  if(saved) root.setAttribute('data-theme', saved);
+  document.getElementById('theme').addEventListener('click', ()=>{
+    const next = root.getAttribute('data-theme') === 'dark' ? '' : 'dark';
+    if(next) root.setAttribute('data-theme', next); else root.removeAttribute('data-theme');
+    localStorage.setItem('theme', next);
+  });
+
+  // Wish generator
+  const nameEl = document.getElementById('yourName');
+  const langEl = document.getElementById('lang');
+  const wishEl = document.getElementById('wish');
+
+  function linepick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+  const data = {
+    en: {
+      greet: [
+        "Shubho Bijoya, {n}!",
+        "Warm Bijoya wishes, {n}!",
+        "Joyful Bijoya to you, {n}!"
+      ],
+      body: [
+        "May this Mahadashami bring peace, clarity and steady courage to your days.",
+        "Wishing you a year flavored with kindness, good health and improbable amounts of good luck.",
+        "May you always find light, whether in diyas, street lamps, or the people beside you."
+      ],
+      culture: [
+        "In Kolkata, we say ‘Aasche bochhor abar hobe’ — we celebrate today, we hope for tomorrow.",
+        "On Dashami, we part with the Goddess so we can greet her again, renewed.",
+        "Sweets get shared, blessings get multiplied, and the drums keep a promise in the air."
+      ],
+      signoff: [
+        "With love and good wishes — Somik & Family.",
+        "Always rooting for you — Somik & Family.",
+        "From our home to yours — Somik & Family."
+      ]
+    },
+    bn: {
+      greet: [
+        "শুভ বিজয়া, {n}!",
+        "প্রীতির বিজয়ার শুভেচ্ছা, {n}!",
+        "আনন্দময় বিজয়া হোক, {n}!"
+      ],
+      body: [
+        "এই মহাদশমী আপনার জীবনে শান্তি, স্বাস্থ‍্য ও সাহস নিয়ে আসুক।",
+        "আপনার বছরটি হোক মিষ্টি শুভেচ্ছা, ভালোবাসা এবং সৌভাগ্যে ভরা।",
+        "আলোর দিয়া, আলো-ভরা মানুষ আর সুন্দর পথে আপনি এগিয়ে চলুন।"
+      ],
+      culture: [
+        "কলকাতায় বলি, ‘আসছে বছর আবার হবে’ — বিদায়ের মধ্যেই প্রত্যাবর্তনের আশা।",
+        "দশমীতে মায়ের বিদায় মানেই পুনর্মিলনের প্রতিশ্রুতি।",
+        "মিষ্টি ভাগ হয়, আশীর্বাদ বাড়ে, ঢাকের তালে শহর জেগে থাকে।"
+      ],
+      signoff: [
+        "ভালবাসা ও শুভকামনায় — সোমিক ও পরিবার।",
+        "আপনার পাশে আমাদের আশীর্বাদ — সোমিক ও পরিবার।",
+        "আমাদের ঘর থেকে আপনার ঘরে — সোমিক ও পরিবার।"
+      ]
+    }
+  };
+
+  const styles = {
+    minimal: {
+      en: ["May your path stay simple, your heart stay full, your courage stay kind."],
+      bn: ["আপনার পথ হোক সহজ, মন হোক পরিপূর্ণ, সাহস হোক সদয়।"]
+    },
+    grand: {
+      en: ["Let triumph ring like dhak beats and joy bloom like marigolds across your year."],
+      bn: ["ঢাকের তালে তালে বিজয়ের সুর, গাঁদা ফুলের মতো ফুটুক আনন্দ আপনার বছর জুড়ে।"]
+    },
+    heart: {
+      en: ["Blessings from our family to yours. May every goodbye return as a brighter hello."],
+      bn: ["আমাদের পরিবার থেকে আপনাদের জন্য আশীর্বাদ। প্রতিটি বিদায় ফিরে আসুক আরও আলোকিত শুভেচ্ছায়।"]
+    }
+  };
+
+  function tmpl(s, n){ return s.replaceAll('{n}', n || 'Friend'); }
+
+  function buildWish(lang, person, extraBlock){
+    const pack = data[lang];
+    const chosen = [
+      tmpl(linepick(pack.greet), person),
+      linepick(pack.body),
+      linepick(pack.culture),
+      linepick(pack.signoff)
+    ];
+    if(extraBlock && styles[extraBlock]){
+      chosen.splice(2, 0, linepick(styles[extraBlock][lang]));
+    }
+    return chosen.join("\n\n");
+  }
+
+  let currentStyle = null;
+  document.getElementById('minimal').onclick = ()=>{ currentStyle='minimal'; ping("Minimal tone locked in."); };
+  document.getElementById('grand').onclick   = ()=>{ currentStyle='grand'; ping("Grand tone locked in."); };
+  document.getElementById('heart').onclick   = ()=>{ currentStyle='heart'; ping("Blessings tone locked in."); };
+
+  function generate(){
+    const n = nameEl.value.trim() || 'Friend';
+    const lang = langEl.value;
+    if(lang === 'mix'){
+      wishEl.value =
+        buildWish('en', n, currentStyle) + "\n\n———\n\n" +
+        buildWish('bn', n, currentStyle);
+    }else{
+      wishEl.value = buildWish(lang, n, currentStyle);
+    }
+    sparkle(); // auto confetti on generation
+  }
+
+  document.getElementById('make').addEventListener('click', generate);
+
+  // Talk to me
+  function speak(){
+    if(!('speechSynthesis' in window)) { alert('Speech not supported on this browser.'); return; }
+    const u = new SpeechSynthesisUtterance(wishEl.value || "Shubho Bijoya from Somik and Family.");
+    const lang = langEl.value === 'bn' ? 'bn-IN' : (langEl.value === 'mix' ? 'en-US' : (langEl.value==='en'?'en-US':'bn-IN'));
+    u.lang = lang;
+    u.rate = 0.98;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  }
+  document.getElementById('speak').addEventListener('click', speak);
+
+  // Confetti (tiny DOM-based)
+  const confCan = document.getElementById('confetti');
+  const ctx = confCan.getContext('2d');
+  function resize(){ confCan.width = innerWidth; confCan.height = innerHeight; }
+  addEventListener('resize', resize); resize();
+
+  let confetti = [];
+  function splash(count=120){
+    for(let i=0;i<count;i++){
+      confetti.push({
+        x: Math.random()*confCan.width,
+        y: -10,
+        r: 4+Math.random()*6,
+        c: Math.random()>.5? '#f0b429' : '#b22222',
+        v: 2+Math.random()*3,
+        drift: (Math.random()-.5)*1.2
+      });
+    }
+  }
+  function tick(){
+    ctx.clearRect(0,0,confCan.width, confCan.height);
+    confetti.forEach(p=>{
+      p.y += p.v; p.x += p.drift;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fillStyle = p.c; ctx.fill();
+    });
+    confetti = confetti.filter(p=>p.y < confCan.height+20);
+    requestAnimationFrame(tick);
+  }
+  tick();
+  function sparkle(){ splash(150); }
+  document.getElementById('conf').addEventListener('click', sparkle);
+
+  // Copy
+  document.getElementById('copy').addEventListener('click', async ()=>{
+    try{
+      await navigator.clipboard.writeText(wishEl.value);
+      ping('Copied to clipboard.');
+    }catch{ alert('Copy failed. You can select and copy manually.'); }
+  });
+
+  // WhatsApp share
+  document.getElementById('wa').addEventListener('click', ()=>{
+    const txt = (wishEl.value || "Shubho Bijoya! Warm wishes from Somik & Family.");
+    const url = "https://wa.me/?text=" + encodeURIComponent(txt);
+    window.open(url, '_blank', 'noopener');
+  });
+
+  // Save as .txt
+  document.getElementById('save').addEventListener('click', ()=>{
+    const blob = new Blob([wishEl.value], {type:'text/plain;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'bijoya-wish-from-somik.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  // Tiny toast
+  function ping(msg){
+    const t = document.createElement('div');
+    t.textContent = msg + " — from Somik & Family";
+    Object.assign(t.style,{
+      position:'fixed', left:'50%', top:'16px', transform:'translateX(-50%)',
+      background:'var(--panel)', color:'var(--fg)', border:'1px solid var(--line)',
+      padding:'8px 12px', borderRadius:'10px', boxShadow:'var(--shadow)', zIndex:99
+    });
+    document.body.appendChild(t);
+    setTimeout(()=>t.remove(), 1800);
+  }
+
+  // First render
+  generate();
+
+  // Scrolling ticker
+  const ticker = document.getElementById('ticker');
+  let mx=0; setInterval(()=>{ mx=(mx+1)%6000; ticker.scrollLeft = mx; }, 25);
+</script>
+</body>
+</html>
