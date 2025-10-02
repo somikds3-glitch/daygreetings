@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Letters from Somik & Family — Shubho Bijoya Mahadashami</title>
+<meta name="description" content="Pick a letter from Somik & Family to reveal a festive Shubho Bijoya Mahadashami message. Mobile-first, interactive, and share-friendly." />
+<style>
+  :root{
+    --bg:#fff8ef; --fg:#222; --muted:#6c6c6c;
+    --panel:#fffdf8; --line:#eadfce; --brand:#b22222; --accent:#f0b429;
+    --radius:16px; --shadow:0 10px 28px rgba(0,0,0,.08);
+    --touch:56px; /* comfortable tap target */
+  }
+  [data-theme="dark"]{
+    --bg:#121314; --fg:#e7e7e7; --muted:#b8b8b8; --panel:#17191b; --line:#2a2d30;
+  }
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font:16px/1.7 system-ui,-apple-system,Segoe UI,Roboto,Noto Sans,Arial,"Apple Color Emoji","Segoe UI Emoji";
+  }
+  header{
+    position:sticky; top:0; z-index:10;
+    padding:10px 12px; border-bottom:1px solid var(--line);
+    backdrop-filter:saturate(140%) blur(8px);
+    background:color-mix(in srgb, var(--bg) 88%, transparent);
+  }
+  .wrap{max-width:960px; margin:0 auto; padding:14px}
+  .brand{display:flex; align-items:center; gap:10px; font-weight:800}
+  .badge{margin-left:auto; display:flex; gap:8px; align-items:center}
+  .select, .btn{
+    border:1px solid var(--line); background:var(--panel); color:var(--fg);
+    border-radius:12px; padding:10px 12px; font:inherit; min-height:var(--touch);
+  }
+  .btn{cursor:pointer; box-shadow:var(--shadow)}
+  .btn.primary{background:linear-gradient(135deg,var(--brand),#cf2c2c); color:#fff; border:none}
+  .btn.ghost{background:transparent}
+  .hero{padding:14px 14px 2px}
+  .hero h1{font-size:clamp(22px,5.5vw,36px); line-height:1.2; margin:0 0 6px}
+  .hero p{margin:0; color:var(--muted); font-size:clamp(14px,3.8vw,16px)}
+  /* Letters grid */
+  .tray{
+    display:grid; gap:12px; margin-top:14px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media(min-width:520px){ .tray{ grid-template-columns: repeat(3, 1fr); } }
+  @media(min-width:860px){ .tray{ grid-template-columns: repeat(4, 1fr); } }
+  .letter{
+    position:relative; border:1px solid var(--line); background:var(--panel);
+    border-radius:16px; padding:14px; box-shadow:var(--shadow);
+    min-height:120px; display:flex; flex-direction:column; justify-content:space-between;
+    transition:transform .4s ease, opacity .35s ease, box-shadow .35s ease;
+    touch-action:manipulation; isolation:isolate;
+  }
+  .letter:active{ transform:scale(.98) }
+  .letter .seal{
+    align-self:flex-end; width:44px; height:44px; border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, #ffd98a, var(--accent));
+    border:2px solid color-mix(in srgb, var(--accent) 40%, var(--line));
+    display:grid; place-items:center; font-weight:900; color:#6a3c00;
+    box-shadow:inset 0 2px 6px rgba(0,0,0,.12);
+  }
+  .letter h3{margin:0; font-size:18px}
+  .letter p{margin:6px 0 0; color:var(--muted); font-size:14px}
+  .letter.pick{ transform:scale(1.08); box-shadow:0 20px 46px rgba(0,0,0,.16) }
+  .tray.fade .letter:not(.pick){ opacity:.05; pointer-events:none }
+  /* Reveal stage */
+  .stage{
+    position:fixed; inset:auto 0 0 0; top:62px;
+    display:none; place-items:center; padding:14px; z-index:20;
+    background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter:blur(6px) saturate(120%);
+  }
+  .stage.show{ display:grid; }
+  .card{
+    width:min(840px, 92vw);
+    background:var(--panel); border:1px solid var(--line); border-radius:20px;
+    box-shadow:0 22px 60px rgba(0,0,0,.18); padding:14px;
+  }
+  .card .top{
+    display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:6px;
+  }
+  .chip{
+    border:1px dashed var(--line); padding:6px 10px; border-radius:999px; font-size:13px;
+    background:color-mix(in srgb, var(--accent) 12%, transparent); color:var(--brand); font-weight:700;
+  }
+  .msg{
+    border:1px solid var(--line); border-radius:16px; background:var(--bg); padding:14px; min-height:160px;
+    font-size:clamp(16px, 4.5vw, 18px)
+  }
+  .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+  .bar{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  .grow{flex:1}
+  .footer{padding:28px 14px; text-align:center; color:var(--muted)}
+  .hint{font-size:13px; color:var(--muted)}
+  /* Motion respect */
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none!important; animation:none!important}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand">
+      <span aria-hidden="true" style="font-size:22px">✉️</span>
+      <span>Letters from Somik & Family</span>
+      <div class="badge">
+        <select id="lang" class="select" aria-label="Language">
+          <option value="en">English</option>
+          <option value="bn">বাংলা (Bengali)</option>
+          <option value="mix">Bilingual</option>
+        </select>
+        <button id="theme" class="btn ghost" aria-label="Toggle dark mode">🌗</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>Pick a letter. Let the message step forward.</h1>
+    <p>Each envelope carries a Shubho Bijoya Mahadashami wish from <strong>Somik & Family</strong>. Choose one to reveal. Mobile-friendly, tap-happy, no clutter.</p>
+  </div>
+</section>
+
+<main class="wrap">
+  <div id="tray" class="tray" aria-label="Letter tray">
+    <!-- Letters injected by JS -->
+  </div>
+  <p class="hint">Pro tip: rotate your phone if you want more envelopes per row. Or don’t. The page adapts faster than most committees.</p>
+</main>
+
+<!-- Reveal stage -->
+<div id="stage" class="stage" aria-live="polite">
+  <div class="card" role="dialog" aria-modal="true" aria-labelledby="cardTitle">
+    <div class="top">
+      <span id="cardTitle" class="chip">A letter from Somik & Family</span>
+      <span class="chip" id="langChip">Language: English</span>
+      <span class="grow"></span>
+      <button id="again" class="btn">← Pick another letter</button>
+    </div>
+    <div id="message" class="msg"></div>
+    <div class="actions">
+      <button id="vari" class="btn">↻ New variation</button>
+      <button id="speak" class="btn">🔊 Speak</button>
+      <button id="conf" class="btn">🎉 Confetti</button>
+      <button id="copy" class="btn">📋 Copy</button>
+      <button id="wa" class="btn">🟢 WhatsApp</button>
+      <button id="save" class="btn">💾 Save</button>
+      <button id="close" class="btn primary">Close</button>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  Crafted with festive care by <strong>Somik & Family</strong>. Shubho Bijoya Mahadashami!
+</footer>
+
+<canvas id="confetti" style="position:fixed; inset:0; pointer-events:none; z-index:1"></canvas>
+
+<script>
+  // Dark mode persistence
+  const root = document.documentElement;
+  const savedTheme = localStorage.getItem('theme');
+  if(savedTheme) root.setAttribute('data-theme', savedTheme);
+  document.getElementById('theme').addEventListener('click', ()=>{
+    const next = root.getAttribute('data-theme') === 'dark' ? '' : 'dark';
+    if(next) root.setAttribute('data-theme', next); else root.removeAttribute('data-theme');
+    localStorage.setItem('theme', next);
+  });
+
+  // Data: multiple “letters” each with an id and a brief teaser
+  const letters = [
+    { id:'L-108', title:'Autumn Light', teaser:'A gentle wish for courage and clarity.' },
+    { id:'L-204', title:'Marigold Path', teaser:'Joy that blooms steadily through the year.' },
+    { id:'L-311', title:'Dhak & Dawn', teaser:'Rhythms, reunions, and sweet returns.' },
+    { id:'L-427', title:'River’s Promise', teaser:'Let goodbyes circle back as hellos.' },
+    { id:'L-536', title:'Hearth & Home', teaser:'Warmth that lingers after the lamps.' },
+    { id:'L-642', title:'Festival Thread', teaser:'Little blessings woven into days.' },
+    { id:'L-753', title:'Sky Lantern', teaser:'Soft light, steady steps, kind luck.' },
+    { id:'L-889', title:'City of Art', teaser:'Kolkata’s glow, shared with you.' }
+  ];
+
+  // Copy-friendly content pools
+  const copy = {
+    en: {
+      openers: [
+        "Shubho Bijoya Mahadashami!",
+        "Warm Bijoya wishes to you!",
+        "Joyful Bijoya from our home to yours!"
+      ],
+      body: [
+        "May this day bring peace, clarity, and kind courage to your year.",
+        "Wishing you health, laughter, and an unreasonable amount of good luck.",
+        "May you always find light, in diyas, in streets, and in the people beside you.",
+        "We part with the Goddess today so we may greet her again, renewed."
+      ],
+      culture: [
+        "In Kolkata we say, “Aasche bochhor abar hobe” — it will happen again next year.",
+        "Sweets get shared, blessings multiply, and the drumbeat keeps a promise in the air."
+      ],
+      sign: [
+        "With love — Somik & Family.",
+        "From our hearts — Somik & Family.",
+        "Always cheering for you — Somik & Family."
+      ]
+    },
+    bn: {
+      openers: [
+        "শুভ বিজয়া মহাদশমী!",
+        "বিজয়ার আন্তরিক শুভেচ্ছা!",
+        "আমাদের ঘর থেকে আপনার ঘরে বিজয়ার শুভেচ্ছা!"
+      ],
+      body: [
+        "এই দিনে আপনার জীবনে শান্তি, স্বাস্থ‍্য ও সাহস জেগে উঠুক।",
+        "আনন্দ ও সৌভাগ্যে ভরে উঠুক আপনার বছরটি।",
+        "দিয়ার আলো, পথের আলো আর মানুষের ভালোবাসা আপনাকে ঘিরে থাকুক।",
+        "আজ বিদায়, আগামীতে পুনর্মিলনের প্রতিশ্রুতি।"
+      ],
+      culture: [
+        "কলকাতায় বলি, “আসছে বছর আবার হবে” — আবারও দেখা হবে, আরও আলোয়।",
+        "মিষ্টি ভাগ হয়, আশীর্বাদ বাড়ে, ঢাকের তালে শহর জেগে থাকে।"
+      ],
+      sign: [
+        "ভালবাসা ও শুভেচ্ছায় — সোমিক ও পরিবার।",
+        "আমাদের আশীর্বাদ রইল — সোমিক ও পরিবার।",
+        "প্রাণভরা শুভেচ্ছা — সোমিক ও পরিবার।"
+      ]
+    }
+  };
+
+  // Build letter tray
+  const tray = document.getElementById('tray');
+  letters.forEach((l, i)=>{
+    const el = document.createElement('button');
+    el.className = 'letter';
+    el.setAttribute('aria-label', `Open letter ${l.id}: ${l.title}`);
+    el.innerHTML = `
+      <div>
+        <h3>${l.title}</h3>
+        <p>${l.teaser}</p>
+      </div>
+      <div class="seal" aria-hidden="true">${String(l.id).slice(-2)}</div>
+    `;
+    el.addEventListener('click', ()=>openLetter(el, l));
+    tray.appendChild(el);
+  });
+
+  const stage = document.getElementById('stage');
+  const messageBox = document.getElementById('message');
+  const langSel = document.getElementById('lang');
+  const langChip = document.getElementById('langChip');
+
+  function linepick(a){ return a[Math.floor(Math.random()*a.length)]; }
+  function buildMsg(lang){
+    if(lang === 'mix'){
+      return buildMsg('en') + "\n\n———\n\n" + buildMsg('bn');
+    }
+    const set = copy[lang];
+    return [
+      linepick(set.openers),
+      linepick(set.body),
+      linepick(set.culture),
+      linepick(set.sign)
+    ].join("\n\n");
+  }
+
+  function openLetter(node, data){
+    // Visual focus
+    tray.classList.add('fade');
+    document.querySelectorAll('.letter').forEach(el=>el.classList.remove('pick'));
+    node.classList.add('pick');
+
+    // Fill message and show stage
+    renderMessage();
+    stage.classList.add('show');
+    updateLangChip();
+  }
+
+  function updateLangChip(){
+    langChip.textContent = 'Language: ' + (langSel.value === 'en' ? 'English' : langSel.value === 'bn' ? 'Bengali' : 'Bilingual');
+  }
+
+  function renderMessage(){
+    messageBox.textContent = buildMsg(langSel.value);
+  }
+
+  // Actions
+  document.getElementById('again').addEventListener('click', ()=>{
+    tray.classList.remove('fade');
+    document.querySelectorAll('.letter').forEach(el=>el.classList.remove('pick'));
+    stage.classList.remove('show');
+  });
+  document.getElementById('close').addEventListener('click', ()=>{
+    stage.classList.remove('show');
+    tray.classList.remove('fade');
+    document.querySelectorAll('.letter').forEach(el=>el.classList.remove('pick'));
+  });
+  document.getElementById('vari').addEventListener('click', renderMessage);
+  langSel.addEventListener('change', ()=>{ updateLangChip(); renderMessage(); });
+
+  // Copy / Share / Save
+  document.getElementById('copy').addEventListener('click', async ()=>{
+    try{
+      await navigator.clipboard.writeText(messageBox.textContent);
+      toast('Copied to clipboard.');
+    }catch{ alert('Copy failed. Select and copy manually.'); }
+  });
+  document.getElementById('wa').addEventListener('click', ()=>{
+    const txt = messageBox.textContent.trim();
+    window.open("https://wa.me/?text=" + encodeURIComponent(txt), "_blank", "noopener");
+  });
+  document.getElementById('save').addEventListener('click', ()=>{
+    const blob = new Blob([messageBox.textContent], {type:'text/plain;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'bijoya-letter-from-somik.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  // Speech synthesis
+  document.getElementById('speak').addEventListener('click', ()=>{
+    if(!('speechSynthesis' in window)) { alert('Speech not supported in this browser.'); return; }
+    const u = new SpeechSynthesisUtterance(messageBox.textContent);
+    u.lang = (langSel.value==='bn' ? 'bn-IN' : (langSel.value==='en' ? 'en-US' : 'en-US'));
+    u.rate = 0.98;
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+  });
+
+  // Confetti
+  const conf = document.getElementById('conf');
+  const confCan = document.getElementById('confetti');
+  const ctx = confCan.getContext('2d');
+  function resize(){ confCan.width = innerWidth; confCan.height = innerHeight; }
+  addEventListener('resize', resize); resize();
+  let bits=[];
+  function splash(count=140){
+    for(let i=0;i<count;i++){
+      bits.push({
+        x: Math.random()*confCan.width,
+        y: -10,
+        r: 3+Math.random()*5,
+        c: Math.random()>.5? '#f0b429' : '#b22222',
+        v: 2+Math.random()*3,
+        drift: (Math.random()-.5)*1.4
+      });
+    }
+  }
+  function tick(){
+    ctx.clearRect(0,0,confCan.width,confCan.height);
+    bits.forEach(p=>{
+      p.y += p.v; p.x += p.drift;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=p.c; ctx.fill();
+    });
+    bits = bits.filter(p=>p.y < confCan.height+16);
+    requestAnimationFrame(tick);
+  }
+  tick();
+  conf.addEventListener('click', ()=>splash(160));
+
+  // Tiny toast
+  function toast(msg){
+    const t = document.createElement('div');
+    t.textContent = msg + ' — from Somik & Family';
+    Object.assign(t.style,{
+      position:'fixed', left:'50%', top:'14px', transform:'translateX(-50%)',
+      background:'var(--panel)', color:'var(--fg)', border:'1px solid var(--line)',
+      padding:'10px 12px', borderRadius:'12px', boxShadow:'var(--shadow)', zIndex:30
+    });
+    document.body.appendChild(t);
+    setTimeout(()=>t.remove(), 1600);
+  }
+
+  // First render hint: preload language chip
+  updateLangChip();
+</script>
+</body>
+</html>
