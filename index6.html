@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mahadashami: An Interactive Greeting & Guide by Somik and Family</title>
+<meta name="description" content="A richly detailed, highly interactive greeting and explainer about Mahadashami (Vijaya Dashami) in Kolkata — created by Somik and Family as a festive wish and cultural walkthrough for non-Bengali friends." />
+
+<!-- Fonts (system fallbacks to keep it lightweight) -->
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>
+  :root{
+    --bg: #fff8ef;
+    --fg: #2b2b2b;
+    --muted:#6b6b6b;
+    --brand:#b22222;         /* festive red */
+    --accent:#f0b429;        /* marigold */
+    --panel:#fffdf8;
+    --line:#e7d9c2;
+    --link:#0b63ce;
+    --shadow: 0 8px 26px rgba(0,0,0,.08);
+    --radius:14px;
+    --radius-sm:10px;
+    --max: 1200px;
+  }
+  [data-theme="dark"]{
+    --bg:#111213;
+    --fg:#e7e7e7;
+    --muted:#b9b9b9;
+    --panel:#16181a;
+    --line:#26292c;
+    --link:#8ab4ff;
+    --shadow: 0 8px 26px rgba(0,0,0,.5);
+  }
+  html,body{height:100%}
+  body{
+    margin:0;
+    font: 16px/1.65 system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    color:var(--fg);
+    background:var(--bg);
+    scroll-behavior:smooth;
+  }
+  header{
+    position:sticky; top:0; z-index:1000;
+    backdrop-filter:saturate(140%) blur(8px);
+    background: color-mix(in srgb, var(--bg) 86%, transparent);
+    border-bottom:1px solid var(--line);
+  }
+  .wrap{max-width:var(--max); margin:0 auto; padding:18px 20px;}
+  .brand{
+    display:flex; gap:14px; align-items:center; font-weight:800; letter-spacing:.3px;
+  }
+  .badge{
+    background:linear-gradient(135deg,var(--brand),#d03a3a);
+    color:white; padding:5px 10px; border-radius:999px; font-size:12px; box-shadow:var(--shadow);
+  }
+  nav ul{display:flex; gap:14px; list-style:none; padding:0; margin:0; flex-wrap:wrap}
+  nav a{display:inline-block; padding:8px 10px; color:var(--fg); text-decoration:none; border-radius:8px}
+  nav a:hover{background:var(--panel)}
+  .controls{margin-left:auto; display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+  .btn{
+    border:1px solid var(--line); background:var(--panel); color:var(--fg);
+    padding:8px 12px; border-radius:10px; cursor:pointer; box-shadow:var(--shadow);
+  }
+  .btn.primary{background:linear-gradient(135deg,var(--brand),#cf2c2c); border:none; color:#fff}
+  .btn.ghost{background:transparent}
+  .hero{
+    background:
+      radial-gradient(800px 400px at 10% -10%, color-mix(in srgb, var(--accent) 25%, transparent), transparent 60%),
+      radial-gradient(800px 400px at 110% 0%, color-mix(in srgb, var(--brand) 20%, transparent), transparent 60%);
+    padding:60px 20px 30px;
+    border-bottom:1px dashed var(--line);
+  }
+  .hero h1{font-size: clamp(28px, 3.8vw, 46px); line-height:1.15; margin:0 0 10px; letter-spacing:.2px}
+  .hero p{max-width:900px; margin:0 0 18px; color:var(--muted); font-size: clamp(16px, 1.4vw, 20px);}
+  .hero .tag{
+    display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px;
+    border:1px solid var(--line); background:var(--panel); margin-top:6px; color:var(--brand); font-weight:700
+  }
+  .grid{display:grid; gap:22px}
+  @media (min-width:900px){ .grid.cols-3{ grid-template-columns:2fr 1fr 1fr } }
+  @media (min-width:1000px){ .grid.cols-2{ grid-template-columns: 1.2fr .8fr } }
+  section{padding:28px 20px; border-bottom:1px solid var(--line)}
+  section h2{margin:0 0 10px; font-size:26px}
+  section h3{margin:18px 0 6px; font-size:20px}
+  .panel{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow)
+  }
+  .toc{ position:sticky; top:76px; align-self:start}
+  .toc a{display:block; padding:8px 10px; color:var(--link); text-decoration:none; border-radius:8px}
+  .toc a.active{background:color-mix(in srgb, var(--accent) 22%, transparent); color:var(--fg); font-weight:700}
+  .divider{height:1px; background:var(--line); margin:14px 0}
+  .kbd{font:600 12px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; padding:2px 6px; border:1px solid var(--line); border-radius:6px; background:var(--panel)}
+  .callout{border-left:6px solid var(--accent); padding:12px 14px; background:var(--panel); border-radius:10px}
+  .quote{font-style:italic; border-left:4px solid var(--brand); padding-left:10px; color:var(--muted)}
+  .pill{display:inline-block; padding:4px 10px; border-radius:999px; border:1px solid var(--line); margin:4px 6px 0 0}
+  .accordion details{border:1px solid var(--line); background:var(--panel); border-radius:12px; padding:10px 12px; margin:10px 0}
+  .accordion summary{cursor:pointer; font-weight:700}
+  .timeline{position:relative; padding-left:26px}
+  .timeline:before{content:""; position:absolute; left:8px; top:0; bottom:0; width:2px; background:var(--line)}
+  .tl-item{position:relative; margin:12px 0; padding-left:6px}
+  .tl-item:before{content:""; position:absolute; left:-5px; top:.5em; width:12px; height:12px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent)}
+  .cards{display:grid; gap:14px}
+  @media (min-width:760px){ .cards{ grid-template-columns: repeat(3,1fr);} }
+  .card{border:1px solid var(--line); border-radius:12px; background:var(--panel); padding:14px; box-shadow:var(--shadow)}
+  .card h4{margin:0 0 8px}
+  .glossary li{margin:4px 0}
+  .search{display:flex; gap:8px; margin:10px 0}
+  input[type="search"], input[type="text"]{
+    flex:1; padding:10px 12px; border-radius:10px; border:1px solid var(--line); background:var(--bg); color:var(--fg)
+  }
+  .quiz{display:grid; gap:10px}
+  .quiz .q{border:1px solid var(--line); border-radius:12px; padding:12px; background:var(--panel)}
+  .quiz button{margin-top:8px}
+  .score{font-weight:800}
+  .video-grid{display:grid; gap:12px}
+  @media(min-width:900px){ .video-grid{ grid-template-columns: repeat(3, 1fr);} }
+  .video-card{border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--panel); box-shadow:var(--shadow)}
+  .video-card a{display:block; padding:12px; color:var(--fg); text-decoration:none}
+  .video-card a:hover{background:color-mix(in srgb, var(--accent) 20%, transparent)}
+  .footer{
+    text-align:center; padding:30px 20px; color:var(--muted)
+  }
+  .float-wish{
+    position:fixed; right:16px; bottom:16px; z-index:1001; display:flex; flex-direction:column; gap:8px; align-items:flex-end
+  }
+  .marquee{
+    overflow:hidden; white-space:nowrap; border:1px dashed var(--line); border-radius:10px; padding:6px 10px; background:var(--panel); color:var(--brand); font-weight:800
+  }
+  .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0}
+  /* Print-friendly */
+  @media print{
+    header,.controls,.float-wish,#backToTop { display:none !important; }
+    body{ background:white }
+    section{ break-inside:avoid }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap" style="display:flex; gap:18px; align-items:center; flex-wrap:wrap">
+    <div class="brand">
+      <span aria-hidden="true" style="font-size:24px">🪔</span>
+      <span>Mahadashami Guide</span>
+      <span class="badge" title="Proudly handcrafted">Developed by Somik</span>
+    </div>
+    <nav aria-label="Primary">
+      <ul>
+        <li><a href="#greeting">Greeting</a></li>
+        <li><a href="#dashami">What is Mahadashami</a></li>
+        <li><a href="#kolkata">Kolkata Traditions</a></li>
+        <li><a href="#rituals">Rituals</a></li>
+        <li><a href="#pandal">Pandal Hopping</a></li>
+        <li><a href="#etiquette">Etiquette</a></li>
+        <li><a href="#learn">Learn & Quiz</a></li>
+        <li><a href="#videos">Pandal Videos</a></li>
+      </ul>
+    </nav>
+    <div class="controls">
+      <button id="theme" class="btn" aria-label="Toggle dark mode"><span aria-hidden="true">🌗</span> Theme</button>
+      <button id="share" class="btn">Share</button>
+      <button id="print" class="btn ghost">Print</button>
+    </div>
+  </div>
+</header>
+
+<section class="hero" id="greeting" aria-labelledby="greet-title">
+  <div class="wrap grid cols-2">
+    <div>
+      <h1 id="greet-title">Shubho Bijoya Dashami — a festive wish and cultural walkthrough from <span style="color:var(--brand)">Somik & Family</span></h1>
+      <p>
+        This page is my way of saying: you’re invited into the heart of a Bengali household on the final day of Durga Puja. Scroll, click, expand, quiz yourself, and follow video links as you like. It’s text-heavy by design so you can learn richly and at your own pace. Every word, interaction and gentle nudge here is crafted and curated by <strong>Somik</strong> as a warm wish to you and yours.
+      </p>
+      <span class="tag" role="note" aria-label="Creator credit">🎉 With love, from Somik & Family</span>
+    </div>
+    <aside class="panel toc" aria-label="On this page">
+      <h3 style="margin:0 0 8px">On this page</h3>
+      <div id="toc-links">
+        <!-- populated by JS -->
+      </div>
+      <div class="divider"></div>
+      <p class="quote">“Festivals are stories we choose to live inside.” — shared with joy by Somik.</p>
+    </aside>
+  </div>
+</section>
+
+<section id="dashami" aria-labelledby="dashami-title">
+  <div class="wrap grid cols-3">
+    <div class="panel" style="grid-column:1 / span 2">
+      <h2 id="dashami-title">What is Mahadashami?</h2>
+      <p>
+        Mahadashami, also known as <em>Vijaya Dashami</em>, is the culminating tenth day of the Durga Puja festival. It marks the victorious return of the Goddess after the triumph of good over evil and signals a tender farewell as the idol is immersed in water. For Bengalis, this is both celebration and soft ache: joy for the victory, nostalgia for the days of music and lights, and the promise, whispered to friends and strangers alike, “<em>Aasche bochhor abar hobe</em>” — it will happen again next year.
+      </p>
+      <div class="callout">
+        <strong>Why this page exists:</strong> to wish you Shubho Bijoya with more than a hello. It’s a guided tour to help you understand not just <em>what</em> we do but <em>why</em> it matters. All compiled by Somik and Family, who are delighted you’re here.
+      </div>
+      <h3>Key ideas, quickly</h3>
+      <ul>
+        <li><span class="pill">Victory & renewal</span> The festival ends, the blessings begin. People exchange sweets and wishes for the year ahead.</li>
+        <li><span class="pill">Community</span> Neighborhood clubs build themed pavilions called <strong>pandals</strong>, turning entire streets into temporary museums.</li>
+        <li><span class="pill">Goodbye ritual</span> Immersion of the idol (<em>Visarjan</em>) is a symbolic return to the cosmic river, not a loss but a cycle.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Try it: speak Bengali words</h3>
+      <p>Click to hear pronunciations via your device’s speech:</p>
+      <div class="cards">
+        <button class="btn" data-say="Shubho Bijoya" data-lang="bn-IN">শুভ বিজয়া</button>
+        <button class="btn" data-say="Aasche bochhor abar hobe" data-lang="bn-IN">আসছে বছর আবার হবে</button>
+        <button class="btn" data-say="Pronam" data-lang="bn-IN">প্রণাম</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="kolkata" aria-labelledby="kolkata-title">
+  <div class="wrap">
+    <h2 id="kolkata-title">How Kolkata lives Mahadashami</h2>
+    <div class="grid cols-2">
+      <article class="panel">
+        <h3>Citywide mood</h3>
+        <p>
+          Morning streets wear last-day calm. By afternoon the drums return, not thunderous but steady, carrying processions toward rivers and lakes. Families visit relatives for <em>Bijoya</em> greetings, sharing sweets like <em>narkel naru</em> and <em>sandesh</em>. In clubs and housing complexes, people line up for a final look at the idol, palms pressed, eyes bright. It’s affectionate chaos, wrapped in courtesy.
+        </p>
+        <h3>Women’s ritual: <em>Sindoor Khela</em></h3>
+        <p>
+          Married women offer sweets to the Goddess and smear vermillion on each other’s foreheads and cheeks, turning the day into a living canvas of red and gold. The gesture is blessing, solidarity and playful farewell all at once.
+        </p>
+        <h3>Visarjan</h3>
+        <p>
+          The idol is carried with chants of “<em>Bolo Durga mai ki—joy!</em>” The immersion is moving, not melancholy; the faith is that the Goddess returns to her cosmic home and will visit again. Drummers keep rhythms that feel like stitched memories. People clap, cry, laugh. Then they go home to call everyone they love.
+        </p>
+      </article>
+      <aside class="panel">
+        <h3>Festive tastes to look for</h3>
+        <ul>
+          <li><strong>Khichuri</strong> with labra (mixed veg) — comfort food of community lunches.</li>
+          <li><strong>Beguni</strong> and <strong>luchi</strong> — crisp and cloud-soft, the snack combo that wins crowds.</li>
+          <li><strong>Rosogolla</strong>, <strong>chomchom</strong>, <strong>mishti doi</strong> — the sweet syllables of Kolkata.</li>
+        </ul>
+        <div class="divider"></div>
+        <p class="quote">Kolkata is a city that builds art just to say goodbye to it properly.</p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section id="rituals" aria-labelledby="rituals-title">
+  <div class="wrap grid cols-3">
+    <div class="panel" style="grid-column:1 / span 2">
+      <h2 id="rituals-title">Rituals of the day, explained</h2>
+      <div class="timeline" id="timeline">
+        <div class="tl-item">
+          <h4>Morning: <em>Darshan</em></h4>
+          <p>Quiet visits to the pandal to offer final prayers. Many touch the sacred thread, offer flowers, and pause to absorb details of the artistry they’ve admired all week.</p>
+        </div>
+        <div class="tl-item">
+          <h4>Noon: <em>Sindoor Khela</em></h4>
+          <p>A shared blessing ritual centered on prosperity, togetherness and the Goddess as daughter, mother, protector.</p>
+        </div>
+        <div class="tl-item">
+          <h4>Afternoon: Farewell mantras</h4>
+          <p>Priests perform concluding rites, offering <em>prasad</em>. The air smells of incense and ghee lamps, and someone always hands you a sweet you didn’t plan to eat.</p>
+        </div>
+        <div class="tl-item">
+          <h4>Evening: <em>Visarjan</em> procession</h4>
+          <p>Idol on a truck or hand-cart, drummers leading, friends dancing. Water receives the clay, completing a cycle that begins months earlier when the clay is gathered from riverbanks.</p>
+        </div>
+        <div class="tl-item">
+          <h4>Night: <em>Bijoya</em> greetings</h4>
+          <p>Calls and visits, sweets and hugs, and blessings from elders as palms touch feet in <em>pronam</em>. And then, planning for next year inevitably begins.</p>
+        </div>
+      </div>
+    </div>
+    <aside class="panel">
+      <h3>Hover glossary</h3>
+      <p>Hover or focus to learn:</p>
+      <ul class="glossary" id="glossary">
+        <li><span data-tip="Temporary pavilion housing the Goddess; often themed with elaborate art."><strong>Pandal</strong></span></li>
+        <li><span data-tip="Final day greetings exchanged after Durga Puja."><strong>Bijoya</strong></span></li>
+        <li><span data-tip="Immersion of the idol in water, signifying return to the cosmic source."><strong>Visarjan</strong></span></li>
+        <li><span data-tip="Offering of light; literally ‘wave of lamps’."><strong>Aarti</strong></span></li>
+        <li><span data-tip="Respectful bow/touching of elders’ feet for blessings."><strong>Pronam</strong></span></li>
+      </ul>
+      <div class="divider"></div>
+      <p class="callout"><strong>Note:</strong> This is a greeting page built by <em>Somik & Family</em>. If you learned something new, that’s our gift to you.</p>
+    </aside>
+  </div>
+</section>
+
+<section id="pandal" aria-labelledby="pandal-title">
+  <div class="wrap">
+    <h2 id="pandal-title">How to “pandal hop” like a pro</h2>
+    <div class="cards">
+      <div class="card">
+        <h4>Route wisdom</h4>
+        <p>Group pandals by neighborhood. North Kolkata offers heritage vibes; South Kolkata leans modern and thematic. Start late afternoon to catch both daylight detailing and nighttime lighting.</p>
+      </div>
+      <div class="card">
+        <h4>Queue etiquette</h4>
+        <p>Lines move fast if everyone flows. Keep backpacks in front, phones on silent inside sanctum areas, and follow volunteers’ cues. Photos are fine unless signage says otherwise.</p>
+      </div>
+      <div class="card">
+        <h4>What to notice</h4>
+        <p>Three layers: the entrance narrative, the interior soundscape, and the idol’s <em>alankar</em> (ornamentation). Many pandals tell social or historical stories through materials and layout.</p>
+      </div>
+      <div class="card">
+        <h4>Food breaks</h4>
+        <p>Street stalls shine on Dashami. Try rolls, cutlets and chai between pandals. Carry small cash for quick moves and shareable bites.</p>
+      </div>
+      <div class="card">
+        <h4>Accessibility</h4>
+        <p>Ask volunteers for priority lines if needed. Early daylight hours are typically less crowded and easier for families and seniors.</p>
+      </div>
+      <div class="card">
+        <h4>Safety</h4>
+        <p>Stay with your group, choose well-lit routes, and use official immersion ghats. If you get separated, pick a landmark and reconvene there.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="etiquette" aria-labelledby="etiquette-title">
+  <div class="wrap">
+    <h2 id="etiquette-title">Etiquette & cultural cues</h2>
+    <div class="accordion" role="list">
+      <details open>
+        <summary>How to greet on Dashami</summary>
+        <p>Say “<strong>Shubho Bijoya</strong>” to everyone you meet. To elders, add a gentle <em>pronam</em>. Expect sweets to appear in your hand; accept with a smile.</p>
+      </details>
+      <details>
+        <summary>Photos and decorum</summary>
+        <p>Photograph art with respect and without blocking pathways. During <em>aarti</em>, pause photos and experience the moment.</p>
+      </details>
+      <details>
+        <summary>Dress notes</summary>
+        <p>Anything neat and comfortable works. Traditional attire adds to the mood but isn’t mandatory. Comfortable footwear will save your evening.</p>
+      </details>
+      <details>
+        <summary>Why there’s so much red</summary>
+        <p>Vermillion symbolizes auspicious power and married life; on Dashami, it becomes a public language of blessing and camaraderie.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section id="learn" aria-labelledby="learn-title">
+  <div class="wrap grid cols-2">
+    <div class="panel">
+      <h2 id="learn-title">Interactive learning</h2>
+      <div class="search">
+        <input id="filter" type="search" placeholder="Search the glossary (try ‘pandal’ or ‘visarjan’)" aria-label="Search glossary" />
+        <button id="clearFilter" class="btn">Clear</button>
+      </div>
+      <ul id="glossaryList" class="glossary">
+        <li data-term="pandal"><strong>Pandal</strong> — temporary sculptural pavilion, often themed, created by local clubs and artists.</li>
+        <li data-term="alpona"><strong>Alpona</strong> — ritual floor art drawn with rice paste; patterns welcome the divine.</li>
+        <li data-term="dhak"><strong>Dhak</strong> — traditional drum whose rolling rhythms define Puja soundscapes.</li>
+        <li data-term="prasad"><strong>Prasad</strong> — sanctified food offered to the Goddess and then shared with devotees.</li>
+        <li data-term="sindoor khela"><strong>Sindoor Khela</strong> — vermillion play among married women on Dashami, expressing blessings.</li>
+        <li data-term="visarjan"><strong>Visarjan</strong> — immersion ritual marking farewell and renewal.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Mini-quiz</h3>
+      <div class="quiz" id="quiz">
+        <div class="q" data-answer="c">
+          <p><strong>1.</strong> The farewell immersion on Dashami is called…</p>
+          <label><input type="radio" name="q1" value="a"> Aarti</label><br>
+          <label><input type="radio" name="q1" value="b"> Pronam</label><br>
+          <label><input type="radio" name="q1" value="c"> Visarjan</label>
+        </div>
+        <div class="q" data-answer="b">
+          <p><strong>2.</strong> A themed festival pavilion is known as…</p>
+          <label><input type="radio" name="q2" value="a"> Alpona</label><br>
+          <label><input type="radio" name="q2" value="b"> Pandal</label><br>
+          <label><input type="radio" name="q2" value="c"> Dhak</label>
+        </div>
+        <div class="q" data-answer="a">
+          <p><strong>3.</strong> The phrase “Aasche bochhor abar hobe” most closely means…</p>
+          <label><input type="radio" name="q3" value="a"> It will happen again next year</label><br>
+          <label><input type="radio" name="q3" value="b"> Please pass the sweets</label><br>
+          <label><input type="radio" name="q3" value="c"> Turn left at the pandal</label>
+        </div>
+        <button id="check" class="btn primary">Check answers</button>
+        <div id="result" class="score" aria-live="polite"></div>
+      </div>
+      <div class="divider"></div>
+      <p><span class="kbd">Tip</span> Press <span class="kbd">?</span> anytime for keyboard shortcuts.</p>
+    </div>
+  </div>
+</section>
+
+<section id="videos" aria-labelledby="videos-title">
+  <div class="wrap">
+    <h2 id="videos-title">Pandal videos: walk through the art</h2>
+    <p>
+      These links open YouTube in a new tab. Each showcases the scale, creativity and emotion of Kolkata’s Puja. Curated and shared by <strong>Somik</strong> so you can tour even from far away.
+    </p>
+    <div class="video-grid">
+      <div class="video-card"><a target="_blank" rel="noopener" href="https://youtu.be/u1cA89U1cq4?si=rC2nZaw2V9nUhsfl">Video 1: Immersive Pandal Tour</a></div>
+      <div class="video-card"><a target="_blank" rel="noopener" href="https://youtu.be/puCzh6hqtXI?si=2ZEdLWj-8heFHGxO">Video 2: Theme Art & Lighting</a></div>
+      <div class="video-card"><a target="_blank" rel="noopener" href="https://youtu.be/oGuNj_51l_U?si=QrNBi_7U6qpakQlv">Video 3: Iconic Club Pandal</a></div>
+      <div class="video-card"><a target="_blank" rel="noopener" href="https://youtu.be/jzhm5tYoeec?si=mR1LGIOhOcglWuh1">Video 4: Street-level Vibe</a></div>
+      <div class="video-card"><a target="_blank" rel="noopener" href="https://youtu.be/pGapSzD9e_c?si=x-9PkNswOmrdfZth">Video 5: Artistic Detailing</a></div>
+      <div class="video-card"><a target="_blank" rel="noopener" href="https://youtu.be/jLH0YapPmoI?si=kB0oI6t1scFamOOk">Video 6: Nighttime Procession</a></div>
+    </div>
+    <div class="callout" style="margin-top:12px">
+      Everything you see here is part of a heartfelt greeting crafted by <strong>Somik & Family</strong>. Consider this page our digital box of sweets.
+    </div>
+  </div>
+</section>
+
+<section id="credits" aria-labelledby="credits-title">
+  <div class="wrap">
+    <h2 id="credits-title">Credits & how to use this page</h2>
+    <p>
+      Built end-to-end by <strong>Somik</strong> as a festive wish. You can toggle dark mode, print a clean version, or share it. Keyboard help is below. If this page made you curious about Kolkata, that’s mission accomplished.
+    </p>
+    <ul>
+      <li><strong>Share:</strong> copies a short message with the page title to your clipboard.</li>
+      <li><strong>Theme:</strong> remembers your choice with local storage.</li>
+      <li><strong>Progress:</strong> sections you view are gently tracked so the Table of Contents can highlight where you are.</li>
+    </ul>
+    <div class="panel">
+      <h3>Keyboard shortcuts</h3>
+      <ul>
+        <li><span class="kbd">g</span> then <span class="kbd">t</span> — jump to top</li>
+        <li><span class="kbd">g</span> then <span class="kbd">v</span> — jump to videos</li>
+        <li><span class="kbd">?</span> — toggle this list</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="float-wish">
+  <div class="marquee" id="marquee" aria-live="polite">Shubho Bijoya — Warm wishes from Somik & Family • Crafted with love by Somik • Shubho Bijoya — Warm wishes from Somik & Family •</div>
+  <button id="backToTop" class="btn">Back to top ⤴</button>
+</div>
+
+<footer class="footer">
+  <p>Made with festive energy by <strong>Somik & Family</strong>. May your year be bright, kind and a little bit Kolkata.</p>
+</footer>
+
+<!-- Scripts -->
+<script>
+  // Dark mode toggle with persistence
+  const root = document.documentElement;
+  const savedTheme = localStorage.getItem('theme');
+  if(savedTheme){ root.setAttribute('data-theme', savedTheme); }
+  document.getElementById('theme').addEventListener('click', ()=>{
+    const next = root.getAttribute('data-theme') === 'dark' ? '' : 'dark';
+    if(next) root.setAttribute('data-theme', next); else root.removeAttribute('data-theme');
+    localStorage.setItem('theme', next);
+  });
+
+  // Build TOC links
+  const tocContainer = document.getElementById('toc-links');
+  const sections = [...document.querySelectorAll('section[id]')];
+  sections.forEach(sec=>{
+    const h = sec.querySelector('h1,h2,h3');
+    if(!h) return;
+    const a = document.createElement('a');
+    a.href = '#'+sec.id;
+    a.textContent = h.textContent;
+    tocContainer.appendChild(a);
+  });
+
+  // Scroll spy for TOC
+  const spy = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        document.querySelectorAll('.toc a').forEach(a=>a.classList.remove('active'));
+        const link = document.querySelector('.toc a[href="#'+e.target.id+'"]');
+        if(link) link.classList.add('active');
+      }
+    });
+  }, {rootMargin:'-40% 0px -55% 0px', threshold:0.01});
+  sections.forEach(s=>spy.observe(s));
+
+  // Share button
+  document.getElementById('share').addEventListener('click', async ()=>{
+    const text = 'Shubho Bijoya! Explore Mahadashami in Kolkata — a greeting and guide by Somik & Family.';
+    const url = location.href;
+    try{
+      if(navigator.share){
+        await navigator.share({title:document.title, text, url});
+      }else{
+        await navigator.clipboard.writeText(text + ' ' + url);
+        alert('Link copied to clipboard!');
+      }
+    }catch(e){ console.log(e); }
+  });
+
+  // Print
+  document.getElementById('print').addEventListener('click', ()=>window.print());
+
+  // Back to top
+  document.getElementById('backToTop').addEventListener('click', ()=>window.scrollTo({top:0, behavior:'smooth'}));
+
+  // Marquee gentle scroll
+  let mx=0; setInterval(()=>{ mx=(mx+1)%5000; document.getElementById('marquee').scrollLeft = mx; }, 30);
+
+  // Speech buttons
+  [...document.querySelectorAll('[data-say]')].forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const u = new SpeechSynthesisUtterance(btn.dataset.say);
+      if(btn.dataset.lang) u.lang = btn.dataset.lang;
+      speechSynthesis.speak(u);
+    });
+  });
+
+  // Glossary hover tips
+  const tips = document.querySelectorAll('[data-tip]');
+  tips.forEach(el=>{
+    el.tabIndex = 0;
+    el.addEventListener('mouseenter', showTip);
+    el.addEventListener('focus', showTip);
+    el.addEventListener('mouseleave', hideTip);
+    el.addEventListener('blur', hideTip);
+  });
+  let tipEl;
+  function showTip(e){
+    const t = e.currentTarget.getAttribute('data-tip');
+    tipEl = document.createElement('div');
+    tipEl.role = "tooltip";
+    tipEl.textContent = t;
+    Object.assign(tipEl.style, {
+      position:'absolute', background:'var(--panel)', color:'var(--fg)',
+      border:'1px solid var(--line)', borderRadius:'8px', padding:'6px 8px', boxShadow:'var(--shadow)', transform:'translateY(-6px)', zIndex:100
+    });
+    const r = e.currentTarget.getBoundingClientRect();
+    tipEl.style.left = (r.left + window.scrollX) + 'px';
+    tipEl.style.top = (r.top + window.scrollY - 36) + 'px';
+    document.body.appendChild(tipEl);
+  }
+  function hideTip(){ if(tipEl){ tipEl.remove(); tipEl=null; } }
+
+  // Glossary filter
+  const filter = document.getElementById('filter');
+  const clearFilter = document.getElementById('clearFilter');
+  const list = document.getElementById('glossaryList');
+  function applyFilter(){
+    const q = filter.value.trim().toLowerCase();
+    list.querySelectorAll('li').forEach(li=>{
+      li.style.display = li.dataset.term.includes(q) ? '' : 'none';
+    });
+  }
+  filter.addEventListener('input', applyFilter);
+  clearFilter.addEventListener('click', ()=>{ filter.value=''; applyFilter(); filter.focus(); });
+
+  // Quiz
+  document.getElementById('check').addEventListener('click', ()=>{
+    let total=0, correct=0;
+    document.querySelectorAll('.quiz .q').forEach((q,i)=>{
+      total++;
+      const ans = q.dataset.answer;
+      const picked = q.querySelector('input[type="radio"]:checked');
+      const block = q;
+      block.style.borderColor = '#e7d9c2'; // reset
+      if(picked && picked.value === ans){ correct++; block.style.borderColor = 'var(--accent)'; }
+      else{ block.style.borderColor = 'var(--brand)'; }
+    });
+    const res = document.getElementById('result');
+    res.textContent = `You scored ${correct}/${total}. ${correct===total?'Perfect! Shubho Bijoya!':'Nice run — try again for a full score.'}`;
+    // Confetti-ish sparkles
+    sparkle();
+  });
+
+  function sparkle(){
+    const n = 80;
+    for(let i=0;i<n;i++){
+      const s = document.createElement('i');
+      s.style.position='fixed';
+      s.style.left = Math.random()*100+'vw';
+      s.style.top = -10+'px';
+      s.style.width = s.style.height = (4+Math.random()*6)+'px';
+      s.style.background = Math.random()>.5?'var(--accent)':'var(--brand)';
+      s.style.borderRadius='50%';
+      s.style.pointerEvents='none';
+      s.style.opacity=.9;
+      document.body.appendChild(s);
+      const dur = 2000 + Math.random()*2000;
+      s.animate([{transform:'translateY(0)'},{transform:'translateY(110vh)'}], {duration:dur, easing:'cubic-bezier(.2,.7,.2,1)'})
+        .finished.then(()=>s.remove());
+    }
+  }
+
+  // Keyboard shortcuts
+  let awaitingG = false;
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === '?'){ e.preventDefault(); document.querySelector('#credits .panel').scrollIntoView({behavior:'smooth'}); }
+    if(e.key.toLowerCase() === 'g'){ awaitingG = true; setTimeout(()=>awaitingG=false, 1500); }
+    else if(awaitingG && e.key.toLowerCase()==='t'){ window.scrollTo({top:0, behavior:'smooth'}); awaitingG=false; }
+    else if(awaitingG && e.key.toLowerCase()==='v'){ document.querySelector('#videos').scrollIntoView({behavior:'smooth'}); awaitingG=false; }
+  });
+
+  // Progressive enhancement: mark section viewed
+  const seen = new Set(JSON.parse(localStorage.getItem('seenSections')||'[]'));
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        seen.add(e.target.id);
+        localStorage.setItem('seenSections', JSON.stringify([...seen]));
+      }
+    });
+  }, {threshold:.4});
+  sections.forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>
