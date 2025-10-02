@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Letters from Somik & Family — Shubho Bijoya Mahadashami</title>
-<meta name="description" content="Pick a letter from Somik & Family to reveal a festive Shubho Bijoya Mahadashami message. Foreground confetti, royal purple background, mobile-first." />
+<title>Shubho Bijoya Mahadashami from Somik and Family</title>
+<meta name="description" content="Pick a letter to reveal a Shubho Bijoya Mahadashami wish from Somik & Family. Foreground confetti, royal purple background, mobile-first, share-friendly." />
 <style>
   :root{
     /* Royal purple theme */
     --bg:#7851A9;                 /* royal purple */
-    --fg:#ffffff;                 /* main text on purple */
-    --muted:#e8dbff;              /* soft lavender text */
-    --panel:rgba(255,255,255,.09);/* translucent cards on purple */
-    --line:rgba(255,255,255,.18); /* hairline borders */
-    --brand:#ffd166;              /* marigold accent */
-    --accent:#ff8fab;             /* pink accent */
+    --fg:#ffffff;                 /* main text */
+    --muted:#e8dbff;              /* soft lavender */
+    --panel:rgba(255,255,255,.10);/* translucent cards */
+    --line:rgba(255,255,255,.25); /* hairline borders */
+    --brand:#ffd166;              /* marigold */
+    --accent:#ff8fab;             /* pink */
     --radius:16px; --shadow:0 10px 28px rgba(0,0,0,.28);
     --touch:56px;
   }
@@ -45,6 +45,7 @@
   .hero{padding:14px 14px 2px}
   .hero h1{font-size:clamp(22px,5.5vw,36px); line-height:1.2; margin:0 0 6px}
   .hero p{margin:0; color:var(--muted); font-size:clamp(14px,3.8vw,16px)}
+
   /* Letters grid */
   .tray{
     display:grid; gap:12px; margin-top:14px;
@@ -57,7 +58,7 @@
     border-radius:16px; padding:14px; box-shadow:var(--shadow);
     min-height:120px; display:flex; flex-direction:column; justify-content:space-between;
     transition:transform .4s ease, opacity .35s ease, box-shadow .35s ease;
-    touch-action:manipulation; isolation:isolate;
+    touch-action:manipulation; isolation:isolate; text-align:left;
   }
   .letter:active{ transform:scale(.98) }
   .letter .seal{
@@ -70,7 +71,8 @@
   .letter h3{margin:0; font-size:18px}
   .letter p{margin:6px 0 0; color:var(--muted); font-size:14px}
   .letter.pick{ transform:scale(1.08); box-shadow:0 20px 46px rgba(0,0,0,.36) }
-  .tray.fade .letter:not(.pick){ opacity:.08; pointer-events:none }
+  .tray.fade .letter:not(.pick){ opacity:.10; pointer-events:none }
+
   /* Reveal stage */
   .stage{
     position:fixed; inset:auto 0 0 0; top:62px;
@@ -93,29 +95,30 @@
   }
   .msg{
     border:1px solid var(--line); border-radius:16px; background:rgba(0,0,0,.22); padding:14px; min-height:160px;
-    font-size:clamp(16px, 4.5vw, 18px)
+    font-size:clamp(16px, 4.5vw, 18px); white-space:pre-wrap
   }
   .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
-  .bar{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
   .grow{flex:1}
   .footer{padding:28px 14px; text-align:center; color:var(--muted)}
   .hint{font-size:13px; color:var(--muted)}
+
   /* Foreground confetti canvas */
   #confetti {
     position:fixed; inset:0; pointer-events:none;
-    z-index: 999999; /* higher than everything, including dialogs */
+    z-index: 999999; /* highest */
   }
-  /* Motion respect */
+
   @media (prefers-reduced-motion: reduce){
     *{transition:none!important; animation:none!important}
   }
 </style>
 </head>
 <body>
+
 <header>
   <div class="wrap">
     <div class="brand">
-      <span aria-hidden="true" style="font-size:22px">✉️</span>
+      <span aria-hidden="true" style="font-size:22px">🪔</span>
       <span>Shubho Bijoya Mahadashami from Somik & Family</span>
       <div class="badge">
         <select id="lang" class="select" aria-label="Language">
@@ -123,7 +126,6 @@
           <option value="bn">বাংলা (Bengali)</option>
           <option value="mix">Bilingual</option>
         </select>
-        <button id="theme" class="btn ghost" aria-label="Toggle dark mode">🌗</button>
       </div>
     </div>
   </div>
@@ -132,15 +134,71 @@
 <section class="hero">
   <div class="wrap">
     <h1>Pick a letter. Let the message step forward.</h1>
-    <p>Each envelope carries a Shubho Bijoya Mahadashami wish from <strong>Somik & Family</strong>. Choose one to reveal. Now with foreground confetti and a royal purple mood.</p>
+    <p>Each envelope carries a wish from <strong>Somik & Family</strong>. Choose one to reveal. Foreground confetti, zero dependencies, phone friendly.</p>
   </div>
 </section>
 
 <main class="wrap">
   <div id="tray" class="tray" aria-label="Letter tray">
-    <!-- Letters injected by JS -->
+    <!-- Static letters so they always render -->
+    <button class="letter" data-id="L-108">
+      <div>
+        <h3>Autumn Light</h3>
+        <p>A gentle wish for courage and clarity.</p>
+      </div>
+      <div class="seal" aria-hidden="true">08</div>
+    </button>
+    <button class="letter" data-id="L-204">
+      <div>
+        <h3>Marigold Path</h3>
+        <p>Joy that blooms steadily through the year.</p>
+      </div>
+      <div class="seal" aria-hidden="true">04</div>
+    </button>
+    <button class="letter" data-id="L-311">
+      <div>
+        <h3>Dhak & Dawn</h3>
+        <p>Rhythms, reunions, and sweet returns.</p>
+      </div>
+      <div class="seal" aria-hidden="true">11</div>
+    </button>
+    <button class="letter" data-id="L-427">
+      <div>
+        <h3>River’s Promise</h3>
+        <p>Let goodbyes circle back as hellos.</p>
+      </div>
+      <div class="seal" aria-hidden="true">27</div>
+    </button>
+    <button class="letter" data-id="L-536">
+      <div>
+        <h3>Hearth & Home</h3>
+        <p>Warmth that lingers after the lamps.</p>
+      </div>
+      <div class="seal" aria-hidden="true">36</div>
+    </button>
+    <button class="letter" data-id="L-642">
+      <div>
+        <h3>Festival Thread</h3>
+        <p>Little blessings woven into days.</p>
+      </div>
+      <div class="seal" aria-hidden="true">42</div>
+    </button>
+    <button class="letter" data-id="L-753">
+      <div>
+        <h3>Sky Lantern</h3>
+        <p>Soft light, steady steps, kind luck.</p>
+      </div>
+      <div class="seal" aria-hidden="true">53</div>
+    </button>
+    <button class="letter" data-id="L-889">
+      <div>
+        <h3>City of Art</h3>
+        <p>Kolkata’s glow, shared with you.</p>
+      </div>
+      <div class="seal" aria-hidden="true">89</div>
+    </button>
   </div>
-  <p class="hint">Mobile-first layout. Big thumbs welcome. Small pockets of joy included.</p>
+  <p class="hint">Tip: rotate your phone for more envelopes per row. Or don’t. It’s flexible like that.</p>
 </main>
 
 <!-- Reveal stage -->
@@ -173,33 +231,8 @@
 <canvas id="confetti"></canvas>
 
 <script>
-  // Theme toggle (kept for completeness; purple is default)
-  const root = document.documentElement;
-  document.getElementById('theme').addEventListener('click', ()=>{
-    // Toggle a slightly darker purple vibe
-    const on = root.dataset.alt === '1';
-    root.dataset.alt = on ? '0' : '1';
-    if(on){
-      document.body.style.background = 'var(--bg)';
-    }else{
-      document.body.style.background = '#6a45a1';
-    }
-  });
-
-  // Data: letters
-  const letters = [
-    { id:'L-108', title:'Autumn Light', teaser:'A gentle wish for courage and clarity.' },
-    { id:'L-204', title:'Marigold Path', teaser:'Joy that blooms steadily through the year.' },
-    { id:'L-311', title:'Dhak & Dawn', teaser:'Rhythms, reunions, and sweet returns.' },
-    { id:'L-427', title:'River’s Promise', teaser:'Let goodbyes circle back as hellos.' },
-    { id:'L-536', title:'Hearth & Home', teaser:'Warmth that lingers after the lamps.' },
-    { id:'L-642', title:'Festival Thread', teaser:'Little blessings woven into days.' },
-    { id:'L-753', title:'Sky Lantern', teaser:'Soft light, steady steps, kind luck.' },
-    { id:'L-889', title:'City of Art', teaser:'Kolkata’s glow, shared with you.' }
-  ];
-
-  // Copy pools
-  const copy = {
+  // Language data
+  const copyPool = {
     en: {
       openers: [
         "Shubho Bijoya Mahadashami!",
@@ -246,37 +279,18 @@
     }
   };
 
-  // Build tray
-  const tray = document.getElementById('tray');
-  letters.forEach((l)=>{
-    const el = document.createElement('button');
-    el.className = 'letter';
-    el.setAttribute('aria-label', `Open letter ${l.id}: ${l.title}`);
-    el.innerHTML = `
-      <div>
-        <h3>${l.title}</h3>
-        <p>${l.teaser}</p>
-      </div>
-      <div class="seal" aria-hidden="true">${String(l.id).slice(-2)}</div>
-    `;
-    el.addEventListener('click', ()=>{
-      openLetter(el);
-      confettiBurst(220); // big burst on picking a letter
-    });
-    tray.appendChild(el);
-  });
-
-  const stage = document.getElementById('stage');
-  const messageBox = document.getElementById('message');
-  const langSel = document.getElementById('lang');
+  const langSel  = document.getElementById('lang');
   const langChip = document.getElementById('langChip');
+  const tray     = document.getElementById('tray');
+  const stage    = document.getElementById('stage');
+  const messageBox = document.getElementById('message');
 
   function linepick(a){ return a[Math.floor(Math.random()*a.length)]; }
   function buildMsg(lang){
     if(lang === 'mix'){
       return buildMsg('en') + "\n\n———\n\n" + buildMsg('bn');
     }
-    const set = copy[lang];
+    const set = copyPool[lang];
     return [
       linepick(set.openers),
       linepick(set.body),
@@ -284,36 +298,36 @@
       linepick(set.sign)
     ].join("\n\n");
   }
-
-  function openLetter(node){
-    tray.classList.add('fade');
-    document.querySelectorAll('.letter').forEach(el=>el.classList.remove('pick'));
-    node.classList.add('pick');
-    renderMessage();
-    stage.classList.add('show');
-    updateLangChip();
-  }
-
+  function renderMessage(){ messageBox.textContent = buildMsg(langSel.value); }
   function updateLangChip(){
     langChip.textContent = 'Language: ' + (langSel.value === 'en' ? 'English' : langSel.value === 'bn' ? 'Bengali' : 'Bilingual');
   }
-  function renderMessage(){ messageBox.textContent = buildMsg(langSel.value); }
 
-  // Actions
+  // Letter interactions
+  document.querySelectorAll('.letter').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      tray.classList.add('fade');
+      document.querySelectorAll('.letter').forEach(el=>el.classList.remove('pick'));
+      btn.classList.add('pick');
+      renderMessage();
+      stage.classList.add('show');
+      updateLangChip();
+      confettiBurst(220);
+    });
+  });
+
+  // Stage actions
   document.getElementById('again').addEventListener('click', ()=>{
     tray.classList.remove('fade');
     document.querySelectorAll('.letter').forEach(el=>el.classList.remove('pick'));
     stage.classList.remove('show');
   });
   document.getElementById('close').addEventListener('click', ()=>{
-    stage.classList.remove('show');
     tray.classList.remove('fade');
     document.querySelectorAll('.letter').forEach(el=>el.classList.remove('pick'));
+    stage.classList.remove('show');
   });
-  document.getElementById('vari').addEventListener('click', ()=>{
-    renderMessage();
-    confettiBurst(140);
-  });
+  document.getElementById('vari').addEventListener('click', ()=>{ renderMessage(); confettiBurst(140); });
   langSel.addEventListener('change', ()=>{ updateLangChip(); renderMessage(); confettiBurst(90); });
 
   // Copy / Share / Save
@@ -346,7 +360,7 @@
     confettiBurst(120);
   });
 
-  // Foreground confetti engine
+  // Foreground confetti engine (always top layer)
   const confCan = document.getElementById('confetti');
   const ctx = confCan.getContext('2d');
   function size(){ confCan.width = innerWidth; confCan.height = innerHeight; }
@@ -376,29 +390,13 @@
   }
   tick();
   function confettiBurst(count=140){ spawn(count); }
-  // Confetti button still exists for manual joy
-  document.getElementById('conf').addEventListener('click', ()=>confettiBurst(200));
 
-  // Trigger a small burst on ANY button press to match “always on hitting the button”
+  // Confetti on ANY button press, per your spec
   document.addEventListener('click', (e)=>{
     if(e.target.closest('button')) confettiBurst(40);
   });
 
-  // Toast
-  function toast(msg){
-    const t = document.createElement('div');
-    t.textContent = msg + ' — from Somik & Family';
-    Object.assign(t.style,{
-      position:'fixed', left:'50%', top:'14px', transform:'translateX(-50%)',
-      background:'rgba(0,0,0,.35)', color:'#fff', border:'1px solid var(--line)',
-      padding:'10px 12px', borderRadius:'12px', boxShadow:var(--shadow), zIndex:1000000
-    });
-    document.body.appendChild(t);
-    setTimeout(()=>t.remove(), 1600);
-  }
-
-  // Initial language chip and hint message
-  function updateLangChip(){ langChip.textContent = 'Language: ' + (langSel.value === 'en' ? 'English' : langSel.value === 'bn' ? 'Bengali' : 'Bilingual'); }
+  // Initialize language chip
   updateLangChip();
 </script>
 </body>
