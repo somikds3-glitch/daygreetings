@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Make a Wish 2026 - Sibaji Das & Family</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Great+Vibes&family=Outfit:wght@200;300;500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --gold: #FFD700;
+            --gold-glow: #ffbf00;
+            --deep-bg: #050510;
+            --glass: rgba(20, 20, 35, 0.7);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--deep-bg);
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+        }
+
+        /* --- CANVAS LAYERS --- */
+        #sky-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+            pointer-events: none; /* Let clicks pass through to UI */
+        }
+
+        /* --- UI CONTAINER --- */
+        .ui-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none; /* Elements inside will have pointer-events: auto */
+        }
+
+        /* --- OPENING SCREEN --- */
+        #opener-screen {
+            position: absolute;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #1a0b2e 0%, #000000 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: transform 1.5s cubic-bezier(0.7, 0, 0.3, 1), opacity 1s ease;
+            pointer-events: auto;
+        }
+
+        .seal-button {
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, #FFD700, #B8860B);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            transition: transform 0.3s ease;
+            animation: pulse-gold 2s infinite;
+            border: 2px solid #fff;
+        }
+        
+        .seal-button:hover { transform: scale(1.1); }
+        .seal-text { font-family: 'Cinzel', serif; font-weight: 700; color: #4a3b00; font-size: 0.9rem; }
+        
+        .click-hint {
+            margin-top: 20px;
+            opacity: 0.7;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* --- MAIN CARD --- */
+        .main-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 2.5rem;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            pointer-events: auto;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 1s ease;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            display: none; /* Hidden initially */
+        }
+
+        .main-card.visible {
+            opacity: 1;
+            transform: scale(1);
+            display: block;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3.5rem;
+            background: linear-gradient(to bottom, #fff, #FFD700);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 5px;
+            line-height: 1;
+        }
+
+        h2 {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.2rem;
+            color: #fff;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 10px rgba(255,215,0,0.3);
+        }
+
+        p {
+            line-height: 1.6;
+            color: #ddd;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+
+        .highlight { color: var(--gold); font-weight: 500; }
+
+        .signature {
+            margin-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 1rem;
+        }
+        .sig-name {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        /* --- INTERACTIVE WISH SECTION --- */
+        .wish-container {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            position: relative;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 12px;
+            border-radius: 8px;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            outline: none;
+        }
+        input::placeholder { color: rgba(255,255,255,0.4); }
+
+        .btn-wish {
+            background: var(--gold);
+            color: #000;
+            border: none;
+            padding: 0 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-wish:hover { background: #fff; }
+
+        /* --- FLOATING LANTERN --- */
+        .lantern {
+            position: absolute;
+            width: 40px;
+            height: 55px;
+            background: radial-gradient(circle, #ffeb3b, #ff9800);
+            border-radius: 10px 10px 5px 5px;
+            bottom: -60px;
+            z-index: 5;
+            box-shadow: 0 0 20px #ff9800;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0.9;
+            animation: floatUp 12s linear forwards;
+            pointer-events: none;
+        }
+        
+        /* Lantern text (the user's wish) */
+        .lantern-msg {
+            position: absolute;
+            width: 150px;
+            text-align: center;
+            top: 60px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.7rem;
+            text-shadow: 0 1px 2px #000;
+        }
+
+        /* --- MUSIC CONTROL --- */
+        .music-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.3s;
+            pointer-events: auto;
+        }
+        .music-btn:hover { background: var(--gold); color: black; }
+
+        /* --- ANIMATIONS --- */
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(255, 215, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateX(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.9; }
+            25% { transform: translateX(10px) rotate(2deg); }
+            50% { transform: translateX(-10px) rotate(-2deg); }
+            75% { transform: translateX(5px) rotate(1deg); }
+            100% { transform: translateX(0) translateY(-110vh) rotate(0deg); opacity: 0; }
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 2.8rem; }
+            .main-card { padding: 1.5rem; width: 95%; }
+            .wish-container { flex-direction: column; }
+            .btn-wish { padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-music" loop>
+        <source src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_2492166526.mp3?filename=ambient-piano-amp-strings-10786.mp3" type="audio/mp3">
+    </audio>
+
+    <canvas id="sky-canvas"></canvas>
+
+    <div id="opener-screen">
+        <div class="seal-button" id="open-btn">
+            <span class="seal-text">OPEN</span>
+        </div>
+        <div class="click-hint">A Message from Sibaji Das & Family</div>
+    </div>
+
+    <div class="ui-layer">
+        
+        <div class="main-card" id="card">
+            <h1>2026</h1>
+            <h2>Happy New Year</h2>
+            
+            <p>
+                From our home to yours, we wish you a year filled with laughter, warmth, and new beginnings. May the coming days be kind, your journey be fruitful, and your heart be light.
+            </p>
+            <p>
+                May <span class="highlight">2026</span> be the year your dreams take flight.
+            </p>
+
+            <div class="wish-container">
+                <input type="text" id="wish-input" placeholder="Type a wish & release it..." maxlength="30">
+                <button class="btn-wish" id="release-btn">Release Lantern ✨</button>
+            </div>
+
+            <div class="signature">
+                <div style="font-size: 0.7rem; text-transform: uppercase; margin-bottom:5px; opacity: 0.7;">With love from</div>
+                <div class="sig-name">Sibaji Das & Family</div>
+            </div>
+        </div>
+
+    </div>
+
+    <button class="music-btn" id="music-toggle" title="Toggle Music">♪</button>
+
+    <script>
+        // --- LOGIC ---
+        const opener = document.getElementById('opener-screen');
+        const openBtn = document.getElementById('open-btn');
+        const card = document.getElementById('card');
+        const music = document.getElementById('bg-music');
+        const musicBtn = document.getElementById('music-toggle');
+        const canvas = document.getElementById('sky-canvas');
+        const ctx = canvas.getContext('2d');
+
+        // 1. OPENING SEQUENCE
+        openBtn.addEventListener('click', () => {
+            opener.style.transform = 'translateY(-100vh)';
+            setTimeout(() => {
+                card.classList.add('visible');
+                // Try to play music (might be blocked depending on browser settings, but click helps)
+                music.volume = 0.4;
+                music.play().catch(e => console.log("Audio autoplay blocked"));
+            }, 600);
+            
+            // Launch initial fireworks celebration
+            for(let i=0; i<10; i++) {
+                setTimeout(() => createRandomFirework(), i * 300);
+            }
+        });
+
+        // 2. MUSIC TOGGLE
+        let isPlaying = true;
+        musicBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                music.pause();
+                musicBtn.style.opacity = "0.5";
+            } else {
+                music.play();
+                musicBtn.style.opacity = "1";
+            }
+            isPlaying = !isPlaying;
+        });
+
+        // 3. WISH LANTERN FEATURE
+        const wishInput = document.getElementById('wish-input');
+        const releaseBtn = document.getElementById('release-btn');
+
+        releaseBtn.addEventListener('click', releaseLantern);
+        wishInput.addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') releaseLantern();
+        });
+
+        function releaseLantern() {
+            const text = wishInput.value.trim();
+            if(!text) return; // Don't release empty lanterns
+
+            // Create Lantern Element
+            const lantern = document.createElement('div');
+            lantern.classList.add('lantern');
+            
+            // Random start position near center
+            const randomX = Math.random() * 60 + 20; // 20% to 80% screen width
+            lantern.style.left = randomX + '%';
+            
+            // Add text if provided
+            const msg = document.createElement('div');
+            msg.classList.add('lantern-msg');
+            msg.textContent = text;
+            lantern.appendChild(msg);
+
+            document.body.appendChild(lantern);
+
+            // Clear input
+            wishInput.value = '';
+
+            // Remove from DOM after animation
+            setTimeout(() => {
+                lantern.remove();
+            }, 12000);
+        }
+
+        // 4. CANVAS FIREWORKS & SPARKLES
+        let width, height;
+        let particles = [];
+        let sparkles = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Mouse Sparkle Trail
+        window.addEventListener('mousemove', (e) => {
+            for(let i=0; i<2; i++) {
+                sparkles.push(new Sparkle(e.clientX, e.clientY));
+            }
+        });
+
+        class Sparkle {
+            constructor(x, y) {
+                this.x = x + (Math.random() - 0.5) * 10;
+                this.y = y + (Math.random() - 0.5) * 10;
+                this.vx = (Math.random() - 0.5) * 1;
+                this.vy = (Math.random() - 0.5) * 1;
+                this.size = Math.random() * 2;
+                this.life = 1;
+                this.decay = 0.02;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life -= this.decay;
+            }
+            draw(ctx) {
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = '#FFD700';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+                ctx.fill();
+            }
+        }
+
+        class Firework {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.velocity = {
+                    x: (Math.random() - 0.5) * 8,
+                    y: (Math.random() - 0.5) * 8
+                };
+                this.life = 1;
+                this.decay = Math.random() * 0.015 + 0.01;
+            }
+            update() {
+                this.velocity.y += 0.05; // gravity
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.life -= this.decay;
+            }
+            draw(ctx) {
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function createRandomFirework() {
+            const x = Math.random() * width;
+            const y = Math.random() * (height * 0.6);
+            const colors = ['#FFD700', '#FF4500', '#00FFFF', '#FF69B4', '#FFFFFF'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            for(let i=0; i<30; i++) {
+                particles.push(new Firework(x, y, color));
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Handle Sparkles
+            sparkles.forEach((s, index) => {
+                s.update();
+                s.draw(ctx);
+                if(s.life <= 0) sparkles.splice(index, 1);
+            });
+
+            // Handle Fireworks
+            particles.forEach((p, index) => {
+                p.update();
+                p.draw(ctx);
+                if(p.life <= 0) particles.splice(index, 1);
+            });
+
+            // Random ambient fireworks
+            if(Math.random() < 0.02) createRandomFirework();
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+    </script>
+</body>
+</html>
