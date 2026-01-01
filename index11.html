@@ -3,268 +3,516 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Happy New Year 2026 - Sibaji Das & Family</title>
+    <title>Make a Wish 2026 - Sangeeta Das & Family</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Great+Vibes&family=Outfit:wght@200;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Great+Vibes&family=Outfit:wght@200;300;500&display=swap" rel="stylesheet">
 
     <style>
         :root {
             --gold: #FFD700;
-            --gold-dim: #C5A000;
-            --bg-dark: #050510;
-            --glass-bg: rgba(15, 15, 25, 0.65);
-            --glass-border: rgba(255, 215, 0, 0.2);
+            --gold-glow: #ffbf00;
+            --deep-bg: #050510;
+            --glass: rgba(20, 20, 35, 0.7);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background-color: var(--bg-dark);
+            background-color: var(--deep-bg);
             color: white;
             font-family: 'Outfit', sans-serif;
             overflow: hidden;
             height: 100vh;
+            width: 100vw;
+            position: relative;
+        }
+
+        /* --- CANVAS LAYERS --- */
+        #sky-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* --- UI CONTAINER --- */
+        .ui-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10;
             display: flex;
             justify-content: center;
             align-items: center;
-            perspective: 1000px; /* For 3D tilt */
+            pointer-events: none;
         }
 
-        /* --- CANVAS BACKGROUND --- */
-        #canvas-bg {
+        /* --- LANTERN CONTAINER (ABOVE UI) --- */
+        #lantern-container {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: radial-gradient(circle at center, #1a1a2e 0%, #000000 100%);
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 50; /* Above everything else */
+            pointer-events: none;
+        }
+
+        /* --- OPENING SCREEN --- */
+        #opener-screen {
+            position: absolute;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #1a0b2e 0%, #000000 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: transform 1.5s cubic-bezier(0.7, 0, 0.3, 1), opacity 1s ease;
+            pointer-events: auto;
+        }
+
+        .seal-button {
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, #FFD700, #B8860B);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            transition: transform 0.3s ease;
+            animation: pulse-gold 2s infinite;
+            border: 2px solid #fff;
+        }
+        
+        .seal-button:hover { transform: scale(1.1); }
+        .seal-text { font-family: 'Cinzel', serif; font-weight: 700; color: #4a3b00; font-size: 0.9rem; }
+        
+        .click-hint {
+            margin-top: 20px;
+            opacity: 0.7;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
         /* --- MAIN CARD --- */
-        .card-wrapper {
+        .main-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 2.5rem;
             width: 90%;
-            max-width: 550px;
-            position: relative;
-            transform-style: preserve-3d; /* Key for 3D effect */
-            transition: transform 0.1s ease-out;
-        }
-
-        .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px) saturate(180%);
-            -webkit-backdrop-filter: blur(16px) saturate(180%);
-            border: 1px solid var(--glass-border);
-            border-top: 1px solid rgba(255, 215, 0, 0.4);
-            border-radius: 24px;
-            padding: 3rem 2rem;
+            max-width: 500px;
             text-align: center;
-            box-shadow: 
-                0 25px 50px -12px rgba(0, 0, 0, 0.5),
-                0 0 30px rgba(255, 215, 0, 0.05),
-                inset 0 0 20px rgba(255, 255, 255, 0.02);
-            position: relative;
-            overflow: hidden;
+            pointer-events: auto;
             opacity: 0;
-            transform: translateY(30px);
-            animation: cardEntrance 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-            animation-delay: 0.5s;
+            transform: scale(0.9);
+            transition: all 1s ease;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            display: none;
         }
 
-        /* Shine effect moving across card */
-        .glass-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(
-                to right,
-                transparent,
-                rgba(255, 255, 255, 0.08),
-                transparent
-            );
-            transform: skewX(-25deg);
-            animation: shine 6s infinite;
+        .main-card.visible {
+            opacity: 1;
+            transform: scale(1);
+            display: block;
         }
 
-        /* --- TYPOGRAPHY --- */
-        .year-label {
+        h1 {
             font-family: 'Cinzel', serif;
-            font-size: clamp(3.5rem, 10vw, 5rem);
-            font-weight: 800;
-            line-height: 1;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, #FFF8DC 0%, #FFD700 40%, #B8860B 100%);
+            font-size: 3.5rem;
+            background: linear-gradient(to bottom, #fff, #FFD700);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.4));
-            letter-spacing: -2px;
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards 1s;
+            margin-bottom: 5px;
+            line-height: 1;
         }
 
-        .greeting {
+        h2 {
             font-family: 'Great Vibes', cursive;
-            font-size: clamp(2rem, 5vw, 2.5rem);
+            font-size: 2.2rem;
             color: #fff;
             margin-bottom: 1.5rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards 1.3s;
+            text-shadow: 0 0 10px rgba(255,215,0,0.3);
         }
 
-        .divider {
-            height: 1px;
-            width: 100px;
-            background: linear-gradient(90deg, transparent, var(--gold), transparent);
-            margin: 0 auto 1.5rem auto;
-            opacity: 0;
-            animation: expandWidth 1s ease forwards 1.5s;
+        p {
+            line-height: 1.6;
+            color: #ddd;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
         }
 
-        .message {
-            font-size: clamp(0.95rem, 3vw, 1.1rem);
-            line-height: 1.7;
-            color: #e0e0e0;
-            font-weight: 300;
-            margin-bottom: 2rem;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards 1.7s;
-        }
+        .highlight { color: var(--gold); font-weight: 500; }
 
-        .highlight {
-            color: var(--gold);
-            font-weight: 600;
-        }
-
-        /* --- SIGNATURE SECTION --- */
-        .signature-box {
-            margin-top: 1rem;
+        .signature {
+            margin-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
             padding-top: 1rem;
-            border-top: 1px dashed rgba(255, 255, 255, 0.1);
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards 2s;
         }
-
-        .from-text {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 0.5rem;
-        }
-
-        .family-name {
+        .sig-name {
             font-family: 'Cinzel', serif;
-            font-size: 1.4rem;
+            color: var(--gold);
             font-weight: 700;
-            color: #fff;
             letter-spacing: 1px;
-            background: linear-gradient(to right, #fff, #FFD700, #fff);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            animation: goldShimmer 3s linear infinite;
+        }
+
+        /* --- INTERACTIVE WISH SECTION --- */
+        .wish-container {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            position: relative;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 12px;
+            border-radius: 8px;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            outline: none;
+        }
+        input::placeholder { color: rgba(255,255,255,0.4); }
+
+        .btn-wish {
+            background: var(--gold);
+            color: #000;
+            border: none;
+            padding: 0 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-wish:hover { 
+            background: #fff; 
+            transform: scale(1.05);
+        }
+        .btn-wish:active {
+            transform: scale(0.95);
+        }
+
+        /* --- FLOATING LANTERN --- */
+        .lantern {
+            position: absolute;
+            width: 50px;
+            height: 70px;
+            background: radial-gradient(circle at 50% 30%, #ffeb3b, #ff9800);
+            border-radius: 10px 10px 5px 5px;
+            bottom: 0;
+            box-shadow: 0 0 30px rgba(255, 152, 0, 0.8), 
+                        inset 0 -10px 20px rgba(255, 215, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            animation: floatUp 10s ease-out forwards;
+            pointer-events: none;
+        }
+
+        /* Lantern glow effect */
+        .lantern::before {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, rgba(255, 235, 59, 0.8), transparent);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: flicker 2s infinite;
+        }
+
+        /* Lantern bottom handle */
+        .lantern::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            width: 40px;
+            height: 8px;
+            background: #8B4513;
+            border-radius: 0 0 5px 5px;
+        }
+        
+        /* Lantern text (the user's wish) */
+        .lantern-msg {
+            position: absolute;
+            width: 200px;
+            text-align: center;
+            top: 75px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.9);
+            font-size: 0.85rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            font-weight: 500;
+            background: rgba(0,0,0,0.3);
+            padding: 5px 10px;
+            border-radius: 5px;
+            backdrop-filter: blur(5px);
+        }
+
+        /* --- MUSIC CONTROL --- */
+        .music-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            background: rgba(255,215,0,0.2);
+            border: 2px solid var(--gold);
+            width: 50px; 
+            height: 50px;
+            border-radius: 50%;
+            color: var(--gold);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.3s;
+            pointer-events: auto;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .music-btn:hover { 
+            background: var(--gold); 
+            color: black; 
+            transform: scale(1.1);
+        }
+        .music-btn.muted {
+            opacity: 0.4;
+            background: rgba(100,100,100,0.2);
+            border-color: #666;
+            color: #666;
         }
 
         /* --- ANIMATIONS --- */
-        @keyframes cardEntrance {
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(255, 215, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
         }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes floatUp {
+            0% { 
+                bottom: 0;
+                opacity: 0;
+                transform: translateX(0) rotate(0deg) scale(0.5);
+            }
+            5% { 
+                opacity: 1;
+                transform: translateX(0) rotate(0deg) scale(1);
+            }
+            25% { transform: translateX(20px) rotate(3deg); }
+            50% { transform: translateX(-15px) rotate(-3deg); }
+            75% { transform: translateX(10px) rotate(2deg); }
+            100% { 
+                bottom: 100vh;
+                opacity: 0.3;
+                transform: translateX(0) rotate(0deg);
+            }
         }
 
-        @keyframes expandWidth {
-            from { width: 0; opacity: 0; }
-            to { width: 100px; opacity: 1; }
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
 
-        @keyframes shine {
-            0% { left: -100%; opacity: 0; }
-            50% { opacity: 0.5; }
-            100% { left: 200%; opacity: 0; }
-        }
-
-        @keyframes goldShimmer {
-            to { background-position: 200% center; }
-        }
-
-        /* Mobile tweaks */
         @media (max-width: 480px) {
-            .glass-card { padding: 2rem 1.5rem; }
+            h1 { font-size: 2.8rem; }
+            .main-card { padding: 1.5rem; width: 95%; }
+            .wish-container { flex-direction: column; }
+            .btn-wish { padding: 12px; }
         }
     </style>
 </head>
 <body>
 
-    <canvas id="canvas-bg"></canvas>
+    <!-- Background Music -->
+    <audio id="bg-music" loop>
+        <source src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_2492166526.mp3" type="audio/mp3">
+    </audio>
 
-    <div class="card-wrapper" id="tiltCard">
-        <div class="glass-card">
-            <div class="year-label">2026</div>
-            <div class="greeting">Happy New Year</div>
-            
-            <div class="divider"></div>
-            
-            <p class="message">
-                As the new year dawns, we are sending our warmest thoughts from our home to yours. May this year be illuminated with <span class="highlight">boundless joy</span>, <span class="highlight">peace</span>, and <span class="highlight">prosperity</span>.
-                <br><br>
-                We hope 2026 brings you the courage to chase your dreams and the good fortune to achieve them. Wishing you and your loved ones a spectacular year ahead!
-            </p>
+    <!-- Lantern Release Sound Effect -->
+    <audio id="lantern-sound">
+        <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_4deafc4444.mp3" type="audio/mp3">
+    </audio>
 
-            <div class="signature-box">
-                <div class="from-text">Warmest Regards</div>
-                <div class="family-name">Sibaji Das & Family</div>
-            </div>
+    <canvas id="sky-canvas"></canvas>
+
+    <!-- Dedicated lantern container -->
+    <div id="lantern-container"></div>
+
+    <div id="opener-screen">
+        <div class="seal-button" id="open-btn">
+            <span class="seal-text">OPEN</span>
         </div>
+        <div class="click-hint">A Message from Sangeeta Das & Family</div>
     </div>
 
-    <script>
-        /**
-         * 1. 3D TILT EFFECT
-         * Adds a subtle premium tilt to the card based on mouse/touch position
-         */
-        const cardWrapper = document.getElementById('tiltCard');
-        const card = document.querySelector('.glass-card');
-
-        document.addEventListener('mousemove', (e) => {
-            if (window.innerWidth < 768) return; // Disable intense tilt on mobile for battery
-            
-            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
-            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
-            
-            cardWrapper.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
-        });
-
-        // Reset on mouse leave
-        document.addEventListener('mouseleave', () => {
-            cardWrapper.style.transform = `rotateY(0deg) rotateX(0deg)`;
-        });
-
-        /**
-         * 2. CANVAS FIREWORKS & PARTICLES
-         * High performance custom animation
-         */
-        const canvas = document.getElementById('canvas-bg');
-        const ctx = canvas.getContext('2d');
+    <div class="ui-layer">
         
+        <div class="main-card" id="card">
+            <h1>2026</h1>
+            <h2>Happy New Year</h2>
+            
+            <p>
+                From our home to yours, we wish you a year filled with laughter, warmth, and new beginnings. May the coming days be kind, your journey be fruitful, and your heart be light.
+            </p>
+            <p>
+                May <span class="highlight">2026</span> be the year your dreams take flight.
+            </p>
+
+            <div class="wish-container">
+                <input type="text" id="wish-input" placeholder="Type a wish & release it..." maxlength="30">
+                <button class="btn-wish" id="release-btn">Release Lantern ✨</button>
+            </div>
+
+            <div class="signature">
+                <div style="font-size: 0.7rem; text-transform: uppercase; margin-bottom:5px; opacity: 0.7;">With love from</div>
+                <div class="sig-name">Sangeeta Das & Family</div>
+            </div>
+        </div>
+
+    </div>
+
+    <button class="music-btn" id="music-toggle" title="Toggle Music">♪</button>
+
+    <script>
+        // --- DOM ELEMENTS ---
+        const opener = document.getElementById('opener-screen');
+        const openBtn = document.getElementById('open-btn');
+        const card = document.getElementById('card');
+        const music = document.getElementById('bg-music');
+        const lanternSound = document.getElementById('lantern-sound');
+        const musicBtn = document.getElementById('music-toggle');
+        const canvas = document.getElementById('sky-canvas');
+        const ctx = canvas.getContext('2d');
+        const lanternContainer = document.getElementById('lantern-container');
+
+        // 1. OPENING SEQUENCE
+        openBtn.addEventListener('click', () => {
+            opener.style.transform = 'translateY(-100vh)';
+            setTimeout(() => {
+                card.classList.add('visible');
+                // Try to play music
+                music.volume = 0.3;
+                music.play().catch(e => {
+                    console.log("Audio autoplay blocked - user will need to click music button");
+                    musicBtn.classList.add('muted');
+                });
+            }, 600);
+            
+            // Launch initial fireworks celebration
+            for(let i=0; i<10; i++) {
+                setTimeout(() => createRandomFirework(), i * 300);
+            }
+        });
+
+        // 2. MUSIC TOGGLE
+        let isPlaying = false;
+        musicBtn.addEventListener('click', () => {
+            if (!isPlaying) {
+                music.play().then(() => {
+                    musicBtn.classList.remove('muted');
+                    isPlaying = true;
+                }).catch(e => {
+                    console.log("Cannot play audio:", e);
+                });
+            } else {
+                music.pause();
+                musicBtn.classList.add('muted');
+                isPlaying = false;
+            }
+        });
+
+        // Check if music is actually playing
+        music.addEventListener('play', () => {
+            isPlaying = true;
+            musicBtn.classList.remove('muted');
+        });
+
+        music.addEventListener('pause', () => {
+            isPlaying = false;
+            musicBtn.classList.add('muted');
+        });
+
+        // 3. WISH LANTERN FEATURE
+        const wishInput = document.getElementById('wish-input');
+        const releaseBtn = document.getElementById('release-btn');
+
+        releaseBtn.addEventListener('click', releaseLantern);
+        wishInput.addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') releaseLantern();
+        });
+
+        function releaseLantern() {
+            const text = wishInput.value.trim();
+            if(!text) {
+                // If no text, still release a lantern but with default message
+                createLantern("✨ A wish ✨");
+            } else {
+                createLantern(text);
+            }
+            
+            // Clear input
+            wishInput.value = '';
+            
+            // Visual feedback on button
+            releaseBtn.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                releaseBtn.style.transform = 'scale(1)';
+            }, 200);
+        }
+
+        function createLantern(wishText) {
+            // Play sound effect
+            lanternSound.currentTime = 0;
+            lanternSound.volume = 0.5;
+            lanternSound.play().catch(e => console.log("Sound effect blocked"));
+
+            // Create Lantern Element
+            const lantern = document.createElement('div');
+            lantern.classList.add('lantern');
+            
+            // Random horizontal start position
+            const randomX = Math.random() * 80 + 10; // 10% to 90% screen width
+            lantern.style.left = randomX + '%';
+            
+            // Add wish text
+            const msg = document.createElement('div');
+            msg.classList.add('lantern-msg');
+            msg.textContent = wishText;
+            lantern.appendChild(msg);
+
+            // Add to dedicated lantern container (above everything)
+            lanternContainer.appendChild(lantern);
+
+            // Create extra sparkles/firework at release point
+            const centerX = (randomX / 100) * width;
+            const bottomY = height - 50;
+            for(let i=0; i<15; i++) {
+                particles.push(new Firework(centerX, bottomY, '#FFD700'));
+            }
+
+            // Remove from DOM after animation completes
+            setTimeout(() => {
+                lantern.remove();
+            }, 10000);
+        }
+
+        // 4. CANVAS FIREWORKS & SPARKLES
         let width, height;
         let particles = [];
-        let fireworks = [];
+        let sparkles = [];
 
         function resize() {
             width = canvas.width = window.innerWidth;
@@ -273,151 +521,98 @@
         window.addEventListener('resize', resize);
         resize();
 
-        // Utility to get random number
-        const random = (min, max) => Math.random() * (max - min) + min;
+        // Mouse Sparkle Trail
+        window.addEventListener('mousemove', (e) => {
+            for(let i=0; i<2; i++) {
+                sparkles.push(new Sparkle(e.clientX, e.clientY));
+            }
+        });
 
-        // Firework Particle Class
-        class FireworkParticle {
+        class Sparkle {
+            constructor(x, y) {
+                this.x = x + (Math.random() - 0.5) * 10;
+                this.y = y + (Math.random() - 0.5) * 10;
+                this.vx = (Math.random() - 0.5) * 1;
+                this.vy = (Math.random() - 0.5) * 1;
+                this.size = Math.random() * 2;
+                this.life = 1;
+                this.decay = 0.02;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life -= this.decay;
+            }
+            draw(ctx) {
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = '#FFD700';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+                ctx.fill();
+            }
+        }
+
+        class Firework {
             constructor(x, y, color) {
                 this.x = x;
                 this.y = y;
                 this.color = color;
-                // Explosion velocity
-                const angle = random(0, Math.PI * 2);
-                const velocity = random(1, 6);
-                this.vx = Math.cos(angle) * velocity;
-                this.vy = Math.sin(angle) * velocity;
-                this.alpha = 1;
-                this.decay = random(0.015, 0.03);
-                this.gravity = 0.05;
+                this.velocity = {
+                    x: (Math.random() - 0.5) * 8,
+                    y: (Math.random() - 0.5) * 8
+                };
+                this.life = 1;
+                this.decay = Math.random() * 0.015 + 0.01;
             }
-
             update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                this.vy += this.gravity; // Gravity pull
-                this.alpha -= this.decay;
-                return this.alpha > 0;
+                this.velocity.y += 0.05; // gravity
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.life -= this.decay;
             }
-
             draw(ctx) {
-                ctx.save();
-                ctx.globalAlpha = this.alpha;
+                ctx.globalAlpha = this.life;
                 ctx.fillStyle = this.color;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
                 ctx.fill();
-                ctx.restore();
             }
         }
 
-        // Rising Firework Rocket Class
-        class Rocket {
-            constructor() {
-                this.x = random(width * 0.1, width * 0.9);
-                this.y = height;
-                this.targetY = random(height * 0.1, height * 0.4);
-                this.speed = random(6, 10);
-                this.color = `hsl(${random(0, 360)}, 70%, 60%)`; // Random bright colors
-                this.exploded = false;
-            }
-
-            update() {
-                this.y -= this.speed;
-                // If reached target height, explode
-                if (this.y <= this.targetY) {
-                    this.exploded = true;
-                    createExplosion(this.x, this.y, this.color);
-                }
-            }
-
-            draw(ctx) {
-                if (this.exploded) return;
-                ctx.fillStyle = this.color;
-                ctx.fillRect(this.x, this.y, 3, 10);
+        function createRandomFirework() {
+            const x = Math.random() * width;
+            const y = Math.random() * (height * 0.6);
+            const colors = ['#FFD700', '#FF4500', '#00FFFF', '#FF69B4', '#FFFFFF'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            for(let i=0; i<30; i++) {
+                particles.push(new Firework(x, y, color));
             }
         }
 
-        // Ambient Gold Dust Class
-        class GoldDust {
-            constructor() {
-                this.x = random(0, width);
-                this.y = random(0, height);
-                this.size = random(0.5, 2);
-                this.speedY = random(-0.5, -0.2); // Float up
-                this.speedX = random(-0.2, 0.2);
-                this.alpha = random(0.1, 0.6);
-            }
-
-            update() {
-                this.y += this.speedY;
-                this.x += this.speedX;
-                if (this.y < 0) this.y = height;
-                if (this.x < 0) this.x = width;
-                if (this.x > width) this.x = 0;
-            }
-
-            draw(ctx) {
-                ctx.fillStyle = `rgba(255, 215, 0, ${this.alpha})`;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        function createExplosion(x, y, color) {
-            for (let i = 0; i < 40; i++) {
-                particles.push(new FireworkParticle(x, y, color));
-            }
-        }
-
-        // Initialize Gold Dust
-        let dustArray = [];
-        for(let i=0; i<70; i++) {
-            dustArray.push(new GoldDust());
-        }
-
-        // Main Animation Loop
         function animate() {
-            // Semi-transparent clear for trail effect
-            ctx.fillStyle = 'rgba(5, 5, 16, 0.2)'; 
-            ctx.fillRect(0, 0, width, height);
+            ctx.clearRect(0, 0, width, height);
 
-            // Manage Rockets
-            if (Math.random() < 0.03) { // 3% chance per frame to launch new rocket
-                fireworks.push(new Rocket());
-            }
-
-            fireworks = fireworks.filter(rocket => {
-                rocket.update();
-                rocket.draw(ctx);
-                return !rocket.exploded;
+            // Handle Sparkles
+            sparkles.forEach((s, index) => {
+                s.update();
+                s.draw(ctx);
+                if(s.life <= 0) sparkles.splice(index, 1);
             });
 
-            // Manage Particles (Explosions)
-            particles = particles.filter(p => {
-                const alive = p.update();
+            // Handle Fireworks
+            particles.forEach((p, index) => {
+                p.update();
                 p.draw(ctx);
-                return alive;
+                if(p.life <= 0) particles.splice(index, 1);
             });
 
-            // Manage Gold Dust (Always there)
-            dustArray.forEach(dust => {
-                dust.update();
-                dust.draw(ctx);
-            });
+            // Random ambient fireworks
+            if(Math.random() < 0.02) createRandomFirework();
 
             requestAnimationFrame(animate);
         }
-
-        // Start animation
         animate();
-
-        // Explosion on click
-        document.addEventListener('click', (e) => {
-            const color = `hsl(${random(0, 360)}, 80%, 60%)`;
-            createExplosion(e.clientX, e.clientY, color);
-        });
 
     </script>
 </body>
