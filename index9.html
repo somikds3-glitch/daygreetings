@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy New Year 2026 - Sibaji Das & Family</title>
+
+```
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Great+Vibes&family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        overflow: hidden;
+        font-family: 'Montserrat', sans-serif;
+        background: #000;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    /* --- ANIMATED BACKGROUND --- */
+    .animated-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(ellipse at top, #1a0033 0%, #000000 50%, #001a33 100%);
+        z-index: -2;
+    }
+
+    /* Animated gradient overlay */
+    .gradient-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, 
+            rgba(255, 0, 150, 0.1) 0%,
+            rgba(0, 204, 255, 0.1) 25%,
+            rgba(255, 215, 0, 0.1) 50%,
+            rgba(138, 43, 226, 0.1) 75%,
+            rgba(255, 0, 150, 0.1) 100%);
+        background-size: 400% 400%;
+        animation: gradientMove 15s ease infinite;
+        z-index: -1;
+    }
+
+    @keyframes gradientMove {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+
+    /* Firework particles */
+    .firework {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        animation: explode 2.5s ease-out infinite;
+    }
+
+    @keyframes explode {
+        0% {
+            transform: translate(0, 0) scale(1);
+            opacity: 1;
+        }
+        100% {
+            transform: translate(var(--tx), var(--ty)) scale(0);
+            opacity: 0;
+        }
+    }
+
+    /* Floating stars */
+    .star {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 0 6px 2px rgba(255, 255, 255, 0.8);
+        animation: twinkle 3s ease-in-out infinite, float 20s linear infinite;
+    }
+
+    @keyframes twinkle {
+        0%, 100% { opacity: 0.3; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.5); }
+    }
+
+    @keyframes float {
+        0% { transform: translateY(100vh) translateX(0); }
+        100% { transform: translateY(-100px) translateX(50px); }
+    }
+
+    /* VIDEO BACKGROUND */
+    #bg-video {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        z-index: -1;
+        object-fit: cover;
+        filter: brightness(0.7) saturate(1.2);
+        opacity: 0;
+        transition: opacity 1.5s;
+    }
+
+    #bg-video.loaded {
+        opacity: 1;
+    }
+
+    /* --- GLASS CARD CONTAINER WITH GLOW --- */
+    .container {
+        text-align: center;
+        color: white;
+        padding: 2rem 1.5rem;
+        border-radius: 30px;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(15px) saturate(150%);
+        -webkit-backdrop-filter: blur(15px) saturate(150%);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 
+            0 0 60px rgba(255, 215, 0, 0.3),
+            0 0 100px rgba(255, 0, 150, 0.2),
+            inset 0 0 60px rgba(255, 255, 255, 0.05);
+        width: 90%;
+        max-width: 600px;
+        max-height: 95vh;
+        overflow-y: auto;
+        opacity: 0;
+        animation: fadeInContainer 2s ease-out forwards, glow 4s ease-in-out infinite;
+        animation-delay: 0.5s, 2.5s;
+        position: relative;
+    }
+
+    /* Animated border glow */
+    @keyframes glow {
+        0%, 100% {
+            box-shadow: 
+                0 0 60px rgba(255, 215, 0, 0.3),
+                0 0 100px rgba(255, 0, 150, 0.2),
+                inset 0 0 60px rgba(255, 255, 255, 0.05);
+        }
+        50% {
+            box-shadow: 
+                0 0 80px rgba(255, 215, 0, 0.5),
+                0 0 120px rgba(255, 0, 150, 0.4),
+                inset 0 0 80px rgba(255, 255, 255, 0.1);
+        }
+    }
+
+    /* Shimmer effect on card */
+    .container::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+            45deg,
+            transparent 30%,
+            rgba(255, 255, 255, 0.1) 50%,
+            transparent 70%
+        );
+        animation: shimmer 6s linear infinite;
+        pointer-events: none;
+    }
+
+    @keyframes shimmer {
+        0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+        100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    }
+
+    /* Custom scrollbar */
+    .container::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    .container::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+    }
+
+    .container::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #FFD700, #FFA500);
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    }
+
+    /* --- TYPOGRAPHY & ANIMATIONS --- */
+    .year {
+        font-family: 'Cinzel', serif;
+        font-size: clamp(3rem, 10vw, 5.5rem);
+        font-weight: 900;
+        line-height: 1;
+        background: linear-gradient(135deg, #FFD700 0%, #FFA500 25%, #FF6347 50%, #FF1493 75%, #FFD700 100%);
+        background-size: 300% 300%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        margin-bottom: 15px;
+        filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.8));
+        
+        opacity: 0;
+        transform: scale(0.3) rotateY(180deg);
+        animation: 
+            popIn 2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards,
+            gradientMove 5s ease infinite,
+            pulse 3s ease-in-out infinite;
+        animation-delay: 1s, 1s, 3s;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(1.5rem, 6vw, 2.5rem);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: clamp(3px, 1.5vw, 8px);
+        margin-bottom: 2rem;
+        background: linear-gradient(90deg, #fff, #FFD700, #fff);
+        background-size: 200% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        animation: textShine 3s linear infinite, slideUp 1.2s ease-out forwards;
+        animation-delay: 0s, 2s;
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    @keyframes textShine {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+
+    /* Decorative line above message */
+    .decorative-line {
+        width: 80%;
+        height: 2px;
+        margin: 0 auto 1.5rem;
+        background: linear-gradient(90deg, transparent, #FFD700, transparent);
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        opacity: 0;
+        animation: fadeIn 1s ease-out forwards;
+        animation-delay: 3s;
+    }
+
+    .message {
+        font-size: clamp(0.9rem, 2.8vw, 1.1rem);
+        line-height: 1.8;
+        margin-bottom: 2rem;
+        color: #f0f0f0;
+        padding: 0 0.5rem;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        font-weight: 400;
+        
+        opacity: 0;
+        animation: fadeIn 2s ease-out forwards;
+        animation-delay: 3.2s;
+    }
+
+    .highlight {
+        background: linear-gradient(90deg, #FFD700, #FFA500);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        font-weight: 600;
+        text-shadow: none;
+        filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+    }
+
+    .divider {
+        height: 1px;
+        width: 60%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+        margin: 0 auto 1.8rem auto;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+
+    .signature-label {
+        font-size: clamp(0.75rem, 2.2vw, 0.9rem);
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        opacity: 0.9;
+        margin-bottom: 8px;
+        color: #FFD700;
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    }
+
+    .signature-name {
+        font-family: 'Great Vibes', cursive;
+        font-size: clamp(2.2rem, 7vw, 4rem);
+        color: #fff;
+        background: linear-gradient(135deg, #fff 0%, #FFD700 50%, #FF1493 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 0 20px rgba(255, 20, 147, 0.6);
+        margin-top: 8px;
+        filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.4));
+        
+        opacity: 0;
+        transform: scale(0.7);
+        animation: glowIn 2s ease-out forwards, float-gentle 4s ease-in-out infinite;
+        animation-delay: 3.8s, 5.8s;
+    }
+
+    @keyframes float-gentle {
+        0%, 100% { transform: translateY(0) scale(1); }
+        50% { transform: translateY(-5px) scale(1.02); }
+    }
+
+    /* Emoji decorations */
+    .emoji-decor {
+        font-size: clamp(1.5rem, 4vw, 2.5rem);
+        display: inline-block;
+        animation: bounce 2s ease-in-out infinite;
+        filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.4));
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        25% { transform: translateY(-10px) rotate(-10deg); }
+        75% { transform: translateY(-10px) rotate(10deg); }
+    }
+
+    /* --- ANIMATION KEYFRAMES --- */
+    @keyframes fadeInContainer {
+        to { opacity: 1; }
+    }
+
+    @keyframes popIn {
+        to { opacity: 1; transform: scale(1) rotateY(0deg); }
+    }
+
+    @keyframes slideUp {
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+        to { opacity: 1; }
+    }
+
+    @keyframes glowIn {
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    /* --- MOBILE ADJUSTMENTS --- */
+    @media (max-width: 600px) {
+        .container {
+            padding: 1.5rem 1rem;
+            width: 95%;
+        }
+        .message {
+            padding: 0 0.3rem;
+        }
+    }
+
+    @media (max-height: 700px) {
+        .year {
+            margin-bottom: 8px;
+        }
+        h1 {
+            margin-bottom: 1.2rem;
+        }
+        .message {
+            margin-bottom: 1.2rem;
+            line-height: 1.6;
+        }
+    }
+
+    /* Particle burst on click */
+    .click-particle {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        pointer-events: none;
+        animation: burstOut 1s ease-out forwards;
+    }
+
+    @keyframes burstOut {
+        0% {
+            transform: translate(0, 0) scale(1);
+            opacity: 1;
+        }
+        100% {
+            transform: translate(var(--px), var(--py)) scale(0);
+            opacity: 0;
+        }
+    }
+</style>
+```
+
+</head>
+<body>
+
+```
+<!-- Animated Background -->
+<div class="animated-bg" id="animatedBg"></div>
+<div class="gradient-overlay"></div>
+
+<!-- Video Background -->
+<video autoplay loop muted playsinline id="bg-video">
+    <source src="https://storage.coverr.co/videos/coverr-fireworks-in-the-dark-sky-4455/preview?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6Ijg3NjdFMzIzRjlGQzEzN0E4QTAyIiwiaWF0IjoxNjM3NzQ3MjgyfQ.P9huLJLzDQBrN5XoX3UQgW8WfJHdSVkPPP6qpUGl-mw" type="video/mp4">
+    <source src="https://res.cloudinary.com/demo/video/upload/fireworks.mp4" type="video/mp4">
+</video>
+
+<div class="container">
+    <div class="year">2026</div>
+    <h1><span class="emoji-decor">✨</span> Happy New Year <span class="emoji-decor">✨</span></h1>
+    
+    <div class="decorative-line"></div>
+    
+    <p class="message">
+        As we welcome the dawn of a new year, our family extends warmest wishes to you and your loved ones. May <span class="highlight">2026</span> illuminate your path with <span class="highlight">boundless joy</span>, <span class="highlight">prosperity</span>, and countless moments of happiness.
+        <br><br>
+        We hope this year brings you closer to your dreams, showers you with <span class="highlight">wonderful memories</span>, and blesses you with <span class="highlight">good health</span> and <span class="highlight">success</span> in all your endeavors. Here's to new adventures, cherished moments, and the courage to embrace every beautiful opportunity that comes your way!
+        <br><br>
+        May your days be filled with laughter, your heart with contentment, and your year with <span class="highlight">endless possibilities</span>! 🎊
+    </p>
+
+    <div class="divider"></div>
+
+    <div class="signature-block">
+        <div class="signature-label">With Love & Best Wishes From</div>
+        <div class="signature-name">Sibaji Das & Family</div>
+    </div>
+</div>
+
+<script>
+    // Create animated fireworks particles
+    function createFireworks() {
+        const bg = document.getElementById('animatedBg');
+        const colors = ['#FFD700', '#FFA500', '#FF6347', '#FF1493', '#00CED1', '#9370DB', '#00FF00'];
+        
+        setInterval(() => {
+            for (let i = 0; i < 25; i++) {
+                const firework = document.createElement('div');
+                firework.classList.add('firework');
+                firework.style.left = Math.random() * 100 + '%';
+                firework.style.top = Math.random() * 100 + '%';
+                firework.style.setProperty('--tx', (Math.random() - 0.5) * 400 + 'px');
+                firework.style.setProperty('--ty', (Math.random() - 0.5) * 400 + 'px');
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                firework.style.background = color;
+                firework.style.boxShadow = `0 0 15px 3px ${color}`;
+                firework.style.animationDelay = Math.random() * 1 + 's';
+                firework.style.animationDuration = (2 + Math.random() * 1.5) + 's';
+                
+                bg.appendChild(firework);
+                
+                setTimeout(() => firework.remove(), 4000);
+            }
+        }, 800);
+    }
+
+    // Create floating stars
+    function createStars() {
+        const bg = document.getElementById('animatedBg');
+        for (let i = 0; i < 50; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            star.style.animationDuration = (15 + Math.random() * 10) + 's';
+            bg.appendChild(star);
+        }
+    }
+
+    // Particle burst on click
+    document.addEventListener('click', function(e) {
+        const colors = ['#FFD700', '#FFA500', '#FF6347', '#FF1493', '#00CED1'];
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('click-particle');
+            particle.style.left = e.clientX + 'px';
+            particle.style.top = e.clientY + 'px';
+            
+            const angle = (Math.PI * 2 * i) / 30;
+            const velocity = 80 + Math.random() * 80;
+            const px = Math.cos(angle) * velocity;
+            const py = Math.sin(angle) * velocity;
+            
+            particle.style.setProperty('--px', px + 'px');
+            particle.style.setProperty('--py', py + 'px');
+            particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+            particle.style.boxShadow = `0 0 10px ${colors[Math.floor(Math.random() * colors.length)]}`;
+            
+            document.body.appendChild(particle);
+            
+            setTimeout(() => particle.remove(), 1000);
+        }
+    });
+
+    // Video handling
+    window.addEventListener('load', function() {
+        const video = document.getElementById('bg-video');
+        const animatedBg = document.getElementById('animatedBg');
+        
+        // Start animations immediately
+        createFireworks();
+        createStars();
+        
+        // Try to play video
+        video.addEventListener('loadeddata', function() {
+            video.classList.add('loaded');
+            animatedBg.style.opacity = '0.4';
+        });
+        
+        video.play().catch(function(error) {
+            console.log('Video autoplay prevented or failed');
+            animatedBg.style.opacity = '1';
+        });
+        
+        // Fallback check
+        setTimeout(function() {
+            if (!video.classList.contains('loaded')) {
+                animatedBg.style.opacity = '1';
+            }
+        }, 3000);
+    });
+</script>
+```
+
+</body>
+</html>
